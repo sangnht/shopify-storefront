@@ -59,4 +59,4 @@ jobs:
           STORE_NAME: ${{ secrets.STORE_NAME }}
           THEME_ID: ${{ secrets.THEME_ID }} # Using the Live Theme ID variable
         run: |
-          shopify theme push --store=$STORE_NAME --theme=$THEME_ID --path=. --force
+          shopify theme push --store=$STORE_NAME --theme=$THEME_ID --path=. --force --allow-live
