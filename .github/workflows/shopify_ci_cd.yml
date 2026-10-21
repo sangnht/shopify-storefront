@@ -9,6 +9,8 @@ jobs:
   # Job 1: Check errors and automatically deploy to Development theme
   deploy_development:
     runs-on: ubuntu-latest
+    environment:
+      name: develop
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -38,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy_development # Must wait for the "deploy_development" job to complete successfully first
     environment: 
-      name: Production # This is the Environment where the required reviewers rule is configured
+      name: production # This is the Environment where the required reviewers rule is configured
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
