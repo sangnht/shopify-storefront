@@ -10,7 +10,7 @@ jobs:
   deploy_development:
     runs-on: ubuntu-latest
     environment:
-      name: develop
+      name: Development
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -40,7 +40,7 @@ jobs:
     runs-on: ubuntu-latest
     needs: deploy_development # Must wait for the "deploy_development" job to complete successfully first
     environment: 
-      name: production # This is the Environment where the required reviewers rule is configured
+      name: Production # This is the Environment where the required reviewers rule is configured
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -59,4 +59,4 @@ jobs:
           STORE_NAME: ${{ secrets.STORE_NAME }}
           THEME_ID: ${{ secrets.THEME_ID }} # Using the Live Theme ID variable
         run: |
-          shopify theme push --store=$STORE_NAME --theme=$THEME_LIVE_ID --path=. --force
+          shopify theme push --store=$STORE_NAME --theme=$THEME_ID --path=. --force
