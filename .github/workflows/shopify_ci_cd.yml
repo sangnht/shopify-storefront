@@ -57,6 +57,6 @@ jobs:
         env:
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
           STORE_NAME: ${{ secrets.STORE_NAME }}
-          THEME_LIVE_ID: ${{ secrets.THEME_LIVE_ID }} # Using the Live Theme ID variable
+          THEME_ID: ${{ secrets.THEME_ID }} # Using the Live Theme ID variable
         run: |
           shopify theme push --store=$STORE_NAME --theme=$THEME_LIVE_ID --path=. --force
