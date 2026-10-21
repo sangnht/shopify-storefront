@@ -8,6 +8,7 @@ on:
 jobs:
   # Job 1: Check errors and automatically deploy to Development theme
   deploy_development:
+    name: Deploy to Development
     runs-on: ubuntu-latest
     environment:
       name: Development
@@ -37,6 +38,7 @@ jobs:
 
   # Job 2: Requires manual Approval before deploying to Live theme
   deploy_live:
+    name: Deploy to Live
     runs-on: ubuntu-latest
     needs: deploy_development # Must wait for the "deploy_development" job to complete successfully first
     environment: 
