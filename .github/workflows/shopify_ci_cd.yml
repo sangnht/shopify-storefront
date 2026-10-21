@@ -9,6 +9,7 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    environment: sangnht.myshopify.com
 
     steps:
       # Step 1: Checkout the repository to the runner environment
