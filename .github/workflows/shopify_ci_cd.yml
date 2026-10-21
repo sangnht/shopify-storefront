@@ -1,40 +1,60 @@
 name: Shopify Theme CI/CD
 
-# Trigger the workflow on push to the master branch or manually via dispatch
 on:
   push:
     branches: [ "master" ]
   workflow_dispatch:
 
 jobs:
-  deploy:
+  # Job 1: Check errors and automatically deploy to Development theme
+  deploy_development:
     runs-on: ubuntu-latest
-    environment: sangnht.myshopify.com
-
     steps:
-      # Step 1: Checkout the repository to the runner environment
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Step 2: Setup Node.js (required environment for Shopify CLI)
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
           node-version: '20'
 
-      # Step 3: Install Shopify CLI globally
       - name: Install Shopify CLI
         run: npm install -g @shopify/cli @shopify/theme
 
-      # Step 4: Push code to Shopify using environment variables (Secrets)
-      - name: Deploy to Shopify Theme
+      # NEW STEP: Scan theme code for syntax errors, missing files, and best practices
+      - name: Run Theme Check (Linting and Error detection)
+        run: shopify theme check --path=.
+
+      - name: Deploy to Staging Theme
         env:
-          # Retrieve data from GitHub Secrets
           SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
           STORE_NAME: ${{ secrets.STORE_NAME }}
           THEME_ID: ${{ secrets.THEME_ID }}
-        # Run the push command. 
-        # The --force flag overwrites changed files.
-        # Ensure the current directory (.) is the theme's root directory.
         run: |
           shopify theme push --store=$STORE_NAME --theme=$THEME_ID --path=. --force
+
+  # Job 2: Requires manual Approval before deploying to Live theme
+  deploy_live:
+    runs-on: ubuntu-latest
+    needs: deploy_development # Must wait for the "deploy_development" job to complete successfully first
+    environment: 
+      name: Production # This is the Environment where the required reviewers rule is configured
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install Shopify CLI
+        run: npm install -g @shopify/cli @shopify/theme
+
+      - name: Deploy to Live Theme
+        env:
+          SHOPIFY_CLI_THEME_TOKEN: ${{ secrets.SHOPIFY_CLI_THEME_TOKEN }}
+          STORE_NAME: ${{ secrets.STORE_NAME }}
+          THEME_LIVE_ID: ${{ secrets.THEME_LIVE_ID }} # Using the Live Theme ID variable
+        run: |
+          shopify theme push --store=$STORE_NAME --theme=$THEME_LIVE_ID --path=. --force
