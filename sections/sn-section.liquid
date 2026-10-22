@@ -1,0 +1,55 @@
+{% liquid 
+    assign sectionId = section.id
+%}
+
+{% stylesheet %}
+
+{% endstylesheet %}
+
+<div id="{{ sectionId }}" >
+  <div class="container">
+    <div class="container__inner">
+        {%  content_for 'blocks' %}
+    </div>
+  </div>
+</div>
+
+{% schema %}
+{
+  "name": "Section",
+  "settings": [
+    {
+        "type": "header",
+        "content": "Settings"
+    },
+    {
+        "type": "checkbox",
+        "id": "full_width",
+        "label": "Full width",
+        "default": false
+    },
+    {
+        "type": "range",
+        "id": "max_width",
+        "label": "Max width",
+        "min": 100,
+        "max": 2000,
+        "step": 20,
+        "unit": "px",
+        "default": 1200,
+        "visible_if": "{{ section.settings.full_width == false }}"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "@theme"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Section",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
