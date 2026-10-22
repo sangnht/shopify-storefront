@@ -1,0 +1,929 @@
+{% liquid
+    assign blockId = block.id
+    assign settings = block.settings
+
+    assign product = settings.product
+    assign showVendor = settings.show_vendor
+    assign showTitle = settings.show_title
+    assign showPrice = settings.show_price
+    assign showRating = settings.show_rating
+    assign showButton = settings.show_button
+    assign buttonLabel = settings.button_label | default: 'View product'
+
+    assign alignment = settings.alignment | default: 'left'
+    case alignment
+        when 'center'
+            assign infoAlignment = 'center'
+        when 'right'
+            assign infoAlignment = 'flex-end'
+        else
+            assign infoAlignment = 'flex-start'
+    endcase
+
+    assign aspectRatio = settings.image_aspect_ratio | default: '1/1'
+    if aspectRatio == 'adapt'
+        if product != blank and product.featured_media != blank
+            assign ratio = product.featured_media.aspect_ratio
+        else
+            assign ratio = 1
+        endif
+    else
+        assign ratio = aspectRatio
+    endif
+
+    assign imageRadius = settings.image_border_radius | default: 0
+    assign hasSecondary = false
+    if product != blank
+        if settings.show_second_image and product.media.size > 1 and product.media[1].media_type == 'image'
+            assign hasSecondary = true
+        endif
+    endif
+
+    assign cardBackground = settings.card_background | default: 'transparent'
+    assign cardBorderWidth = settings.card_border_width | default: 0
+    assign cardBorderColor = settings.card_border_color | default: '#e5e5e5'
+    assign cardRadius = settings.card_border_radius | default: 0
+    assign cardPadVertical = settings.card_padding_vertical | default: 0
+    assign cardPadHorizontal = settings.card_padding_horizontal | default: 0
+
+    assign titleSizeDesktop = settings.title_size_desktop | default: 16
+    assign titleSizeMobile = settings.title_size_mobile | default: 15
+    assign titleColor = settings.title_color | default: '#1a1a1a'
+    assign vendorColor = settings.vendor_color | default: '#6b6b6b'
+    assign priceColor = settings.price_color | default: '#1a1a1a'
+    assign salePriceColor = settings.sale_price_color | default: '#c0392b'
+    assign titleWeight = settings.title_font_weight | default: 700
+    assign vendorSize = settings.vendor_size | default: 12
+    assign starSize = vendorSize | plus: 1
+    assign priceSize = settings.price_size | default: 15
+    assign oldPriceSize = priceSize | minus: 2
+    assign totalLabelSize = settings.total_label_size | default: 13
+    assign buttonFontSize = settings.button_font_size | default: 14
+
+    # Pricing
+    assign priceLayout = settings.price_layout | default: 'simple'
+    assign showSavings = settings.show_savings
+    assign savingsLabel = settings.savings_label | default: 'Your VIP credit'
+    assign discountValue = settings.discount_value | default: 0 | plus: 0
+    assign finalPriceLabel = settings.final_price_label | default: 'YOU PAY'
+    assign savingsBackground = settings.savings_background | default: '#e9f7ec'
+    assign savingsTextColor = settings.savings_text_color | default: '#1b7a34'
+    assign showDivider = settings.show_divider
+    assign dividerColor = settings.divider_color | default: '#cfcfcf'
+    assign finalPriceColor = settings.final_price_color | default: '#1b7a34'
+    assign finalPriceSize = settings.final_price_size | default: 30
+
+    assign priceValue = 5998
+    if product != blank
+        assign priceValue = product.price
+    endif
+    assign discountAmount = discountValue
+    if discountAmount > priceValue
+        assign discountAmount = priceValue
+    endif
+    assign finalValue = priceValue | minus: discountAmount
+
+    assign cardShadowOpacity = settings.card_shadow_opacity | default: 0 | plus: 0
+
+    assign buttonBackground = settings.button_background | default: '#1a1a1a'
+    assign buttonTextColor = settings.button_text_color | default: '#ffffff'
+    assign buttonRadius = settings.button_border_radius | default: 0
+    assign buttonFullWidth = settings.button_full_width
+
+    assign imageAlt = product.featured_media.alt | default: product.title
+    assign imageSizes = '(min-width: 750px) calc(100vw - 10rem), 100vw'
+%}
+
+{% style %}
+#{{ blockId }}.product-block {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    padding: {{ cardPadVertical }}px {{ cardPadHorizontal }}px;
+    background: {{ cardBackground }};
+    border: {{ cardBorderWidth }}px solid {{ cardBorderColor }};
+    border-radius: {{ cardRadius }}px;
+    text-align: {{ alignment }};
+    {%- if cardShadowOpacity > 0 %}
+        box-shadow: 0 12px 32px rgba(0, 0, 0, {{ cardShadowOpacity | divided_by: 100.0 }});
+    {%- endif %}
+}
+
+#{{ blockId }} .product-block__media {
+    position: relative;
+    width: 100%;
+    aspect-ratio: {{ ratio }};
+    overflow: hidden;
+    border-radius: {{ imageRadius }}px;
+    background-color: #f4f4f4;
+}
+
+#{{ blockId }} .product-block__media-link {
+    display: block;
+    position: absolute;
+    inset: 0;
+}
+
+#{{ blockId }} .product-block__img {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: opacity 0.35s ease;
+}
+
+#{{ blockId }} .product-block__img--secondary {
+    opacity: 0;
+}
+
+#{{ blockId }} .product-block__media--has-secondary:hover .product-block__img--primary {
+    opacity: 0;
+}
+
+#{{ blockId }} .product-block__media--has-secondary:hover .product-block__img--secondary {
+    opacity: 1;
+}
+
+#{{ blockId }} .product-block__media .placeholder-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#{{ blockId }} .product-block__info {
+    display: flex;
+    flex-direction: column;
+    align-items: {{ infoAlignment }};
+    gap: 1rem;
+    width: 100%;
+}
+
+#{{ blockId }} .product-block__vendor {
+    font-size: {{ vendorSize }}px;
+    letter-spacing: 0.05em;
+    color: {{ vendorColor }};
+}
+
+#{{ blockId }} .product-block__title {
+    margin: 0;
+    font-size: {{ titleSizeDesktop }}px;
+    font-weight: {{ titleWeight }};
+    line-height: 1.3;
+    color: {{ titleColor }};
+    word-break: break-word;
+}
+
+#{{ blockId }} .product-block__title a {
+    color: inherit;
+    text-decoration: none;
+    transition: opacity 0.2s ease;
+}
+
+#{{ blockId }} .product-block__title a:hover {
+    opacity: 0.7;
+}
+
+#{{ blockId }} .product-block__rating {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    font-size: {{ vendorSize }}px;
+    line-height: 1;
+    color: {{ vendorColor }};
+}
+
+#{{ blockId }} .product-block__stars {
+    --rating-percent: 0%;
+    font-size: {{ starSize }}px;
+    letter-spacing: 0.08em;
+    color: {{ titleColor }};
+    background: linear-gradient(
+        90deg,
+        currentColor var(--rating-percent),
+        rgba(0, 0, 0, 0.15) var(--rating-percent)
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+#{{ blockId }} .product-block__price {
+    display: flex;
+    align-items: baseline;
+    gap: 0.8rem;
+    font-size: {{ priceSize }}px;
+}
+
+#{{ blockId }} .product-block__price-old {
+    font-size: {{ oldPriceSize }}px;
+    color: {{ vendorColor }};
+}
+
+#{{ blockId }} .product-block__price-current {
+    font-weight: 600;
+    color: {{ priceColor }};
+}
+
+#{{ blockId }} .product-block__price-current--sale {
+    color: {{ salePriceColor }};
+}
+
+#{{ blockId }} .product-block__price-list {
+    display: flex;
+    flex-direction: column;
+    gap: 0.8rem;
+    width: 100%;
+    text-align: left;
+}
+
+#{{ blockId }} .product-block__price-row {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+    font-size: {{ priceSize }}px;
+    color: {{ priceColor }};
+}
+
+#{{ blockId }} .product-block__price-label {
+    color: {{ vendorColor }};
+}
+
+#{{ blockId }} .product-block__savings {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    padding: 1rem 1.4rem;
+    border-radius: 0.8rem;
+    background-color: {{ savingsBackground }};
+    color: {{ savingsTextColor }};
+    font-size: {{ priceSize }}px;
+}
+
+#{{ blockId }} .product-block__savings-value {
+    font-weight: 700;
+}
+
+#{{ blockId }} .product-block__divider {
+    width: 100%;
+    margin: 0.4rem 0;
+    border: 0;
+    border-top: 1px dashed {{ dividerColor }};
+}
+
+#{{ blockId }} .product-block__total {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 1rem;
+}
+
+#{{ blockId }} .product-block__total-label {
+    font-size: {{ totalLabelSize }}px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: {{ titleColor }};
+}
+
+#{{ blockId }} .product-block__total-value {
+    font-size: {{ finalPriceSize }}px;
+    font-weight: 700;
+    line-height: 1.1;
+    color: {{ finalPriceColor }};
+}
+
+#{{ blockId }} .product-block__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 0.4rem;
+    padding: 1rem 2rem;
+    font-size: {{ buttonFontSize }}px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    color: {{ buttonTextColor }};
+    background: {{ buttonBackground }};
+    border-radius: {{ buttonRadius }}px;
+    transition: opacity 0.2s ease;
+    {% if buttonFullWidth %}
+        width: 100%;
+    {% endif %}
+}
+
+#{{ blockId }} .product-block__button:not(.product-block__button--disabled):hover {
+    opacity: 0.85;
+}
+
+#{{ blockId }} .product-block__button--disabled {
+    cursor: default;
+}
+
+@media screen and (max-width: 749px) {
+    #{{ blockId }} .product-block__title {
+        font-size: {{ titleSizeMobile }}px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #{{ blockId }} .product-block__img,
+    #{{ blockId }} .product-block__title a,
+    #{{ blockId }} .product-block__button {
+        transition: none;
+    }
+}
+{% endstyle %}
+
+<div id="{{ blockId }}" class="product-block" {{ block.shopify_attributes }}>
+    <div class="product-block__media{% if hasSecondary %} product-block__media--has-secondary{% endif %}">
+        {%- if product != blank -%}
+            <a class="product-block__media-link" href="{{ product.url }}" aria-label="{{ product.title | escape }}">
+                {{
+                    product.featured_media
+                    | image_url: width: 1200
+                    | image_tag:
+                        widths: '300, 450, 600, 750, 900, 1200',
+                        sizes: imageSizes,
+                        alt: imageAlt,
+                        loading: 'lazy',
+                        class: 'product-block__img product-block__img--primary'
+                }}
+                {%- if hasSecondary -%}
+                    {{
+                        product.media[1]
+                        | image_url: width: 1200
+                        | image_tag:
+                            widths: '300, 450, 600, 750, 900, 1200',
+                            sizes: imageSizes,
+                            alt: imageAlt,
+                            loading: 'lazy',
+                            class: 'product-block__img product-block__img--secondary'
+                    }}
+                {%- endif -%}
+            </a>
+        {%- else -%}
+            {{ 'product-apparel-2' | placeholder_svg_tag: 'placeholder-svg' }}
+        {%- endif -%}
+    </div>
+
+    <div class="product-block__info">
+        {%- if showVendor -%}
+            <div class="product-block__vendor">
+                {%- if product != blank -%}{{ product.vendor }}{%- else -%}Vendor{%- endif -%}
+            </div>
+        {%- endif -%}
+
+        {%- if showTitle -%}
+            <h3 class="product-block__title">
+                {%- if product != blank -%}
+                    <a href="{{ product.url }}">{{ product.title | escape }}</a>
+                {%- else -%}
+                    Product title
+                {%- endif -%}
+            </h3>
+        {%- endif -%}
+
+        {%- if showRating and product != blank and product.metafields.reviews.rating.value != blank -%}
+            {% liquid
+                assign ratingValue = product.metafields.reviews.rating.value.rating
+                assign ratingScale = product.metafields.reviews.rating.value.scale_max | default: 5
+                assign ratingCount = product.metafields.reviews.rating_count
+                assign ratingPercent = ratingValue | times: 100.0 | divided_by: ratingScale
+            %}
+            <div
+                class="product-block__rating"
+                aria-label="Rated {{ ratingValue }} out of {{ ratingScale }}{% if ratingCount != blank %} from {{ ratingCount }} reviews{% endif %}"
+            >
+                <span class="product-block__stars" aria-hidden="true" style="--rating-percent: {{ ratingPercent }}%;">★★★★★</span>
+                {%- if ratingCount != blank -%}
+                    <span class="product-block__rating-count" aria-hidden="true">({{ ratingCount }})</span>
+                {%- endif -%}
+            </div>
+        {%- endif -%}
+
+        {%- if showPrice and priceLayout == 'savings' -%}
+            <div class="product-block__price-list">
+                <div class="product-block__price-row">
+                    <span class="product-block__price-label">Price</span>
+                    <span class="product-block__price-value">{{ priceValue | money }}</span>
+                </div>
+
+                {%- if showSavings and discountAmount > 0 -%}
+                    <div class="product-block__savings">
+                        <span class="product-block__savings-label">{{ savingsLabel }}</span>
+                        <span class="product-block__savings-value">- {{ discountAmount | money }}</span>
+                    </div>
+                {%- endif -%}
+
+                {%- if showDivider -%}
+                    <hr class="product-block__divider">
+                {%- endif -%}
+
+                <div class="product-block__total">
+                    <span class="product-block__total-label">{{ finalPriceLabel }}</span>
+                    <span class="product-block__total-value">{{ finalValue | money }}</span>
+                </div>
+            </div>
+        {%- elsif showPrice -%}
+            <div class="product-block__price">
+                {%- if product != blank -%}
+                    {%- if product.compare_at_price > product.price -%}
+                        <s class="product-block__price-old">{{ product.compare_at_price | money }}</s>
+                        <span class="product-block__price-current product-block__price-current--sale">
+                            {%- if product.price_varies %}From {% endif -%}
+                            {{- product.price | money -}}
+                        </span>
+                    {%- else -%}
+                        <span class="product-block__price-current">
+                            {%- if product.price_varies %}From {% endif -%}
+                            {{- product.price | money -}}
+                        </span>
+                    {%- endif -%}
+                {%- else -%}
+                    <span class="product-block__price-current">$19.99</span>
+                {%- endif -%}
+            </div>
+        {%- endif -%}
+
+        {%- if showButton -%}
+            {%- if product != blank -%}
+                <a class="product-block__button" href="{{ product.url }}">{{ buttonLabel }}</a>
+            {%- else -%}
+                <span class="product-block__button product-block__button--disabled">{{ buttonLabel }}</span>
+            {%- endif -%}
+        {%- endif -%}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Product"
+    },
+    {
+      "type": "product",
+      "id": "product",
+      "label": "Product"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_vendor",
+      "label": "Show vendor",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_title",
+      "label": "Show title",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_price",
+      "label": "Show price",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "show_rating",
+      "label": "Show rating",
+      "info": "Requires a product reviews rating metafield.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "View product",
+      "visible_if": "{{ block.settings.show_button }}"
+    },
+    {
+      "type": "header",
+      "content": "Pricing",
+      "visible_if": "{{ block.settings.show_price }}"
+    },
+    {
+      "type": "select",
+      "id": "price_layout",
+      "label": "Price layout",
+      "options": [
+        {
+          "value": "simple",
+          "label": "Simple price"
+        },
+        {
+          "value": "savings",
+          "label": "Savings card"
+        }
+      ],
+      "default": "savings",
+      "visible_if": "{{ block.settings.show_price }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_savings",
+      "label": "Show savings row",
+      "default": true,
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' }}"
+    },
+    {
+      "type": "text",
+      "id": "savings_label",
+      "label": "Savings label",
+      "default": "Your VIP credit",
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' and block.settings.show_savings }}"
+    },
+    {
+      "type": "number",
+      "id": "discount_value",
+      "label": "Discount amount (cents)",
+      "info": "Amount subtracted from the price, in cents. Example: 3000 = 30.00.",
+      "default": 3000,
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' and block.settings.show_savings }}"
+    },
+    {
+      "type": "color",
+      "id": "savings_background",
+      "label": "Savings background",
+      "default": "#e9f7ec",
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' and block.settings.show_savings }}"
+    },
+    {
+      "type": "color",
+      "id": "savings_text_color",
+      "label": "Savings text color",
+      "default": "#1b7a34",
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' and block.settings.show_savings }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_divider",
+      "label": "Show divider",
+      "default": true,
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' }}"
+    },
+    {
+      "type": "color",
+      "id": "divider_color",
+      "label": "Divider color",
+      "default": "#d9d9d9",
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' and block.settings.show_divider }}"
+    },
+    {
+      "type": "text",
+      "id": "final_price_label",
+      "label": "Total label",
+      "default": "YOU PAY",
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' }}"
+    },
+    {
+      "type": "color",
+      "id": "final_price_color",
+      "label": "Total color",
+      "default": "#1b7a34",
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' }}"
+    },
+    {
+      "type": "range",
+      "id": "final_price_size",
+      "label": "Total value size",
+      "min": 18,
+      "max": 48,
+      "step": 1,
+      "unit": "px",
+      "default": 30,
+      "visible_if": "{{ block.settings.show_price and block.settings.price_layout == 'savings' }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "select",
+      "id": "image_aspect_ratio",
+      "label": "Image aspect ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "Adapt to image"
+        },
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "16/9",
+          "label": "Wide (16:9)"
+        }
+      ],
+      "default": "4/3"
+    },
+    {
+      "type": "range",
+      "id": "image_border_radius",
+      "label": "Image border radius",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "checkbox",
+      "id": "show_second_image",
+      "label": "Show second image on hover",
+      "info": "Only applies when the product has more than one image.",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Card"
+    },
+    {
+      "type": "color_background",
+      "id": "card_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "card_shadow_opacity",
+      "label": "Shadow opacity",
+      "info": "0 disables the card shadow.",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "%",
+      "default": 10
+    },
+    {
+      "type": "range",
+      "id": "card_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "card_border_color",
+      "label": "Border color",
+      "default": "#e5e5e5",
+      "visible_if": "{{ block.settings.card_border_width > 0 }}"
+    },
+    {
+      "type": "range",
+      "id": "card_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 60,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "card_padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "card_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "title_size_desktop",
+      "label": "Title size (desktop)",
+      "min": 12,
+      "max": 36,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "title_size_mobile",
+      "label": "Title size (mobile)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "title_font_weight",
+      "label": "Title weight",
+      "min": 100,
+      "max": 900,
+      "step": 100,
+      "default": 700
+    },
+    {
+      "type": "color",
+      "id": "title_color",
+      "label": "Title color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "vendor_color",
+      "label": "Vendor and rating color",
+      "default": "#6b6b6b"
+    },
+    {
+      "type": "color",
+      "id": "price_color",
+      "label": "Price color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "sale_price_color",
+      "label": "Sale price color",
+      "default": "#c0392b"
+    },
+    {
+      "type": "range",
+      "id": "vendor_size",
+      "label": "Vendor and rating size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "price_size",
+      "label": "Price size",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "total_label_size",
+      "label": "Total label size",
+      "min": 10,
+      "max": 18,
+      "step": 1,
+      "unit": "px",
+      "default": 13
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "range",
+      "id": "button_font_size",
+      "label": "Text size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14,
+      "visible_if": "{{ block.settings.show_button }}"
+    },
+    {
+      "type": "color_background",
+      "id": "button_background",
+      "label": "Background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "checkbox",
+      "id": "button_full_width",
+      "label": "Full width",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product",
+      "category": "Custom",
+      "settings": {
+        "show_vendor": false,
+        "show_title": true,
+        "show_price": true,
+        "show_rating": false,
+        "show_button": false,
+        "button_label": "View product",
+        "alignment": "left",
+        "image_aspect_ratio": "4/3",
+        "image_border_radius": 12,
+        "show_second_image": false,
+        "card_background": "#ffffff",
+        "card_shadow_opacity": 10,
+        "card_border_width": 0,
+        "card_border_color": "#e5e5e5",
+        "card_border_radius": 20,
+        "card_padding_vertical": 24,
+        "card_padding_horizontal": 24,
+        "title_size_desktop": 20,
+        "title_size_mobile": 18,
+        "title_font_weight": 700,
+        "title_color": "#1a1a1a",
+        "vendor_color": "#6b6b6b",
+        "price_color": "#1a1a1a",
+        "sale_price_color": "#c0392b",
+        "vendor_size": 12,
+        "price_size": 15,
+        "total_label_size": 13,
+        "price_layout": "savings",
+        "show_savings": true,
+        "savings_label": "Your VIP credit",
+        "discount_value": 3000,
+        "savings_background": "#e9f7ec",
+        "savings_text_color": "#1b7a34",
+        "show_divider": true,
+        "divider_color": "#d9d9d9",
+        "final_price_label": "YOU PAY",
+        "final_price_color": "#1b7a34",
+        "final_price_size": 30,
+        "button_font_size": 14,
+        "button_background": "#1a1a1a",
+        "button_text_color": "#ffffff",
+        "button_border_radius": 0,
+        "button_full_width": false
+      }
+    }
+  ]
+}
+{% endschema %}
