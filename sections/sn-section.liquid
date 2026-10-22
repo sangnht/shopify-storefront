@@ -1,12 +1,71 @@
 {% liquid 
     assign sectionId = section.id
+    assign sectionSettings = section.settings
+
+    # Settings
+    assign fullWidth = sectionSettings.full_width
+    if fullWidth
+      assign maxWidth = '100%'
+    else
+      assign maxWidth = sectionSettings.max_width | append: 'px'
+    endif
+    assign borderRadius = sectionSettings.border_radius | append: 'px'
+
+    # Background
+    assign backgroundImageEnable = sectionSettings.background_image_enable
+    if backgroundImageEnable
+      assign backgroundImageDesktop = sectionSettings.background_image_desktop | img_url: '1920x1080'
+      assign backgroundImageMobile = sectionSettings.background_image_mobile | img_url: '750x1334'
+    else
+      assign backgroundColor = sectionSettings.background_gradient
+      assign backgroundContainerColor = sectionSettings.background_container_gradient
+    endif
+
+    # Padding
+    assign paddingVertical = sectionSettings.padding_vertical | append: 'px'
+    assign paddingHorizontal = sectionSettings.padding_horizontal | append: 'px'
+
+    assign enableContainerPadding = sectionSettings.enable_container_padding
+    if enableContainerPadding
+      assign containerPaddingVertical = sectionSettings.container_padding_vertical | append: 'px'
+      assign containerPaddingHorizontal = sectionSettings.container_padding_horizontal | append: 'px'
+    else
+      assign containerPaddingVertical = paddingVertical
+      assign containerPaddingHorizontal = paddingHorizontal
+    endif
+
+    # Box Shadow
+    assign boxShadowHorizontal = sectionSettings.box_shadow_horizontal | append: 'px'
+    assign boxShadowVertical = sectionSettings.box_shadow_vertical | append: 'px'
+    assign boxShadowBlur = sectionSettings.box_shadow_blur | append: 'px'
+    assign boxShadowSpread = sectionSettings.box_shadow_spread | append: 'px'
+    assign boxShadowColor = sectionSettings.box_shadow_color
 %}
 
-{% stylesheet %}
+{% style %}
+#{{ sectionId }} {
+  background: {{ backgroundColor }};
+  background-image: if(backgroundImageEnable, 'url(' | append: backgroundImageDesktop | append: ')', 'none');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  padding: {{ paddingVertical }} {{ paddingHorizontal }};
+  .container {
+    max-width: {{ maxWidth }};
+    margin: 0 auto;
+    background: {{ backgroundContainerColor }};
+    padding: {{ containerPaddingVertical }} {{ containerPaddingHorizontal }};
+    border-radius: {{ borderRadius }};
+    box-shadow: {{ boxShadowHorizontal }} {{ boxShadowVertical }} {{ boxShadowBlur }} {{ boxShadowSpread }} {{ boxShadowColor }};
+  }
 
-{% endstylesheet %}
+  @media (max-width: 767px) {
+    background-image: if(backgroundImageEnable, 'url(' | append: backgroundImageMobile | append: ')', 'none');
+  }
+}
+{% endstyle %}
 
-<div id="{{ sectionId }}" >
+<div id="{{ sectionId }}" class="content-and-media">
   <div class="container">
     <div class="container__inner">
         {%  content_for 'blocks' %}
@@ -38,6 +97,161 @@
         "unit": "px",
         "default": 1200,
         "visible_if": "{{ section.settings.full_width == false }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+        "type": "header",
+        "content": "Background"
+    },
+    {
+      "type": "checkbox",
+      "id": "background_image_enable",
+      "label": "Enable background image",
+      "default": false
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_desktop",
+      "label": "Background image (desktop)",
+      "info": "Recommended size: 1920 x 1080px",
+      "visible_if": "{{ section.settings.background_image_enable == true }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image_mobile",
+      "label": "Background image (mobile)",
+      "info": "Recommended size: 750 x 1334px",
+      "visible_if": "{{ section.settings.background_image_enable == true }}"
+    },
+    {
+      "type": "color_background",
+      "id": "background_gradient",
+      "label": "Background gradient",
+      "default": "linear-gradient(90deg,rgba(42, 123, 155, 1) 0%, rgba(87, 199, 133, 1) 50%, rgba(237, 221, 83, 1) 100%)",
+      "visible_if": "{{ section.settings.background_image_enable == false }}"
+    },
+    {
+      "type": "color_background",
+      "id": "background_container_gradient",
+      "label": "Background container gradient",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Padding"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_container_padding",
+      "label": "Enable container padding",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Padding Container",
+      "visible_if": "{{ section.settings.enable_container_padding == true }}"
+    },
+
+    {
+      "type": "range",
+      "id": "container_padding_vertical",
+      "label": "Vertical (container)",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 15,
+      "visible_if": "{{ section.settings.enable_container_padding == true }}"
+    },
+    {
+      "type": "range",
+      "id": "container_padding_horizontal",
+      "label": "Horizontal (container)",
+      "min": 0,
+      "max": 200,
+      "step": 5,
+      "unit": "px",
+      "default": 15,
+      "visible_if": "{{ section.settings.enable_container_padding == true }}"
+    },
+    {
+      "type": "header",
+      "content": "Box Shadow"
+    },
+    {
+      "type": "range",
+      "id": "box_shadow_horizontal",
+      "label": "Horizontal",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "box_shadow_vertical",
+      "label": "Vertical",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "box_shadow_blur",
+      "label": "Blur",
+      "min": 0,
+      "max": 50,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "box_shadow_spread",
+      "label": "Spread",
+      "min": -20,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "box_shadow_color",
+      "label": "Color",
+      "default": "#000000"
     }
   ],
   "blocks": [

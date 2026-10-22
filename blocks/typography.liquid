@@ -1,0 +1,171 @@
+{% liquid 
+    assign sectionId = block.id
+    assign settings = block.settings
+
+    assign fontSizeDesktop = settings.font_size_desktop | default: 16
+    assign fontSizeMobile = settings.font_size_mobile | default: 16
+    assign fontWeight = settings.font_weight | default: 400
+    if settings.font_style_italic
+        assign fontStyleItalic = "italic"
+    else
+        assign fontStyleItalic = "normal"
+    endif
+
+    assign enableTextGradient = settings.enable_text_gradient | default: false
+    assign gradientColor = settings.gradient_color | default: "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
+    
+    assign textTransform = settings.text_transform | default: "none"
+    assign textAlign = settings.text_align | default: "left"
+%}
+
+{% style %}
+#{{ sectionId }}.typography {
+    text-align: {{ textAlign }};
+    p {
+        font-size: clamp({{ fontSizeMobile }}px, 2.5vw, {{ fontSizeDesktop }}px);
+        line-height: 1.5;
+        font-weight: {{ fontWeight }};
+        font-style: {{ fontStyleItalic }};
+        background: {{ gradientColor }};
+        margin: 0;
+        {% if enableTextGradient %}
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        {% else %}
+            display: inline;
+        {% endif %}
+        text-transform: {{ textTransform }};
+    }
+}
+{% endstyle %}
+
+<div id="{{ sectionId }}" class="typography">
+    <p>{{ settings.content }}</p>
+</div>
+
+{% schema %}
+{
+  "name": "Typography",
+  "settings": [
+    {
+        "type": "header",
+        "content": "Settings"
+    },
+    {
+        "type": "checkbox",
+        "id": "enable_text_gradient",
+        "label": "Enable Text Gradient",
+        "default": false
+    },
+    {
+        "type": "color_background",
+        "id": "gradient_color",
+        "label": "Gradient Color",
+        "default": "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
+    },
+    {
+        "type": "range",
+        "id": "font_size_desktop",
+        "label": "Font Size (Desktop)",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "default": 16
+    },
+    {
+        "type": "range",
+        "id": "font_size_mobile",
+        "label": "Font Size (Mobile)",
+        "min": 10,
+        "max": 100,
+        "step": 1,
+        "default": 16
+    },
+    {
+        "type": "range",
+        "id": "font_weight",
+        "label": "Font Weight",
+        "min": 100,
+        "max": 900,
+        "step": 100,
+        "default": 400
+    },
+    {
+        "type": "checkbox",
+        "id": "font_style_italic",
+        "label": "Italic",
+        "default": false
+    },
+    {
+        "type": "select",
+        "id": "text_transform",
+        "label": "Text Transform",
+        "options": [
+            {
+                "value": "none",
+                "label": "None"
+            },
+            {
+                "value": "uppercase",
+                "label": "Uppercase"
+            },
+            {
+                "value": "lowercase",
+                "label": "Lowercase"
+            },
+            {
+                "value": "capitalize",
+                "label": "Capitalize"
+            }
+        ]
+    },
+    {
+        "type": "select",
+        "id": "text_align",
+        "label": "Text Align",
+        "options": [
+            {
+                "value": "left",
+                "label": "Left"
+            },
+            {
+                "value": "center",
+                "label": "Center"
+            },
+            {
+                "value": "right",
+                "label": "Right"
+            }
+        ],
+        "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Text",
+      "default": "This is a Typography Block"
+    },
+  ],
+    "presets": [
+        {
+            "name": "Typography",
+            "category": "Custom",
+            "settings": {
+                "enable_text_gradient": false,
+                "gradient_color": "transparent",
+                "font_size_desktop": 16,
+                "font_size_mobile": 16,
+                "font_weight": 400,
+                "font_style_italic": false,
+                "text_transform": "none",
+                "text_align": "left",
+                "content": "This is a Typography Block"
+            }
+        }
+    ]
+}
+{% endschema %}
