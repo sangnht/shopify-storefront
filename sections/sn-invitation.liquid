@@ -1,0 +1,206 @@
+{% liquid
+    assign settings = section.settings
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} .sn-cta {
+    background: {{ settings.background }};
+    padding: {{ settings.padding_vertical }}px {{ settings.padding_horizontal }}px;
+    color: #ffffff;
+}
+
+#shopify-section-{{ section.id }} .sn-cta__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    max-width: {{ settings.max_width }}px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#shopify-section-{{ section.id }} .sn-cta__heading {
+    width: 100%;
+}
+
+#shopify-section-{{ section.id }} .sn-cta__subtitle {
+    margin-top: 16px;
+    width: 100%;
+}
+
+#shopify-section-{{ section.id }} .sn-cta__button {
+    margin-top: 28px;
+}
+
+#shopify-section-{{ section.id }} .sn-cta__cancel {
+    margin-top: 18px;
+}
+{% endstyle %}
+
+<div class="sn-cta">
+    <div class="sn-cta__inner">
+        <div class="sn-cta__heading">
+            {% content_for 'block', type: 'heading', id: 'cta-heading' %}
+        </div>
+
+        <div class="sn-cta__subtitle">
+            {% content_for 'block', type: 'typography', id: 'cta-subtitle' %}
+        </div>
+
+        <div class="sn-cta__button">
+            {% content_for 'block', type: 'button', id: 'cta-button' %}
+        </div>
+
+        <div class="sn-cta__cancel">
+            {% content_for 'block', type: 'hyperlink', id: 'cta-cancel' %}
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Invitation",
+  "tag": "section",
+  "class": "sn-invitation",
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "linear-gradient(115deg, #2a1633 0%, #3b2147 58%, #4a2a5c 100%)"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 88
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 900
+    }
+  ],
+  "presets": [
+    {
+      "name": "Invitation",
+      "category": "Custom",
+      "settings": {
+        "background": "linear-gradient(115deg, #2a1633 0%, #3b2147 58%, #4a2a5c 100%)",
+        "padding_vertical": 88,
+        "padding_horizontal": 24,
+        "max_width": 900
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "id": "cta-heading",
+          "static": true,
+          "settings": {
+            "text": "Your <strong>Next Reward</strong> Is Ready to Claim!",
+            "size_desktop": 56,
+            "size_mobile": 32,
+            "font_weight": 800,
+            "letter_spacing": -1,
+            "text_color": "#ffffff",
+            "accent_color": "#f0b429",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "typography",
+          "id": "cta-subtitle",
+          "static": true,
+          "settings": {
+            "content": "<p>A little something extra is waiting in your account.</p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "enable_highlight_gradient": false,
+            "highlight_gradient": "linear-gradient(90deg, rgba(240, 180, 41, 1) 0%, rgba(255, 198, 92, 1) 100%)",
+            "font_size_desktop": 20,
+            "font_size_mobile": 16,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "center",
+            "border_width": 0,
+            "border_color": "#e5e5e5",
+            "border_style": "solid",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0
+          }
+        },
+        {
+          "type": "button",
+          "id": "cta-button",
+          "static": true,
+          "settings": {
+            "label": "Activate My Membership",
+            "action": "link",
+            "alignment": "center",
+            "full_width": false,
+            "padding_vertical": 18,
+            "padding_horizontal": 36,
+            "font_size_desktop": 15,
+            "font_size_mobile": 14,
+            "font_weight": 800,
+            "letter_spacing": 0,
+            "text_transform": "uppercase",
+            "background": "#f0b429",
+            "text_color": "#2a1633",
+            "hover_background": "#ffc65c",
+            "hover_text_color": "#2a1633",
+            "hover_animation": "lift",
+            "animation_duration": 200,
+            "border_width": 0,
+            "border_color": "#f0b429",
+            "border_style": "solid",
+            "border_radius": 100
+          }
+        },
+        {
+          "type": "hyperlink",
+          "id": "cta-cancel",
+          "static": true,
+          "settings": {
+            "label": "Manage Membership",
+            "open_in_new_tab": false,
+            "alignment": "center",
+            "font_size_desktop": 14,
+            "font_size_mobile": 13,
+            "font_weight": 500,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_color": "#ffffff",
+            "hover_color": "#f0b429",
+            "underline_style": "slide_left",
+            "underline_thickness": 1,
+            "underline_offset": 3,
+            "arrow": "none",
+            "animation_duration": 250
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,239 @@
+{% liquid
+    assign settings = section.settings
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} .sn-steps {
+    background: {{ settings.background }};
+    padding: {{ settings.padding_vertical }}px {{ settings.padding_horizontal }}px;
+    color: #241333;
+}
+
+#shopify-section-{{ section.id }} .sn-steps__inner {
+    max-width: {{ settings.max_width }}px;
+    margin: 0 auto;
+}
+
+#shopify-section-{{ section.id }} .sn-steps__heading {
+    text-align: center;
+}
+
+#shopify-section-{{ section.id }} .sn-steps__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 40px;
+    margin-top: 40px;
+}
+
+#shopify-section-{{ section.id }} .sn-steps__grid .media-block {
+    width: 100%;
+}
+
+@media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .sn-steps__grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 48px;
+    }
+}
+{% endstyle %}
+
+<div class="sn-steps">
+    <div class="sn-steps__inner">
+        <div class="sn-steps__heading">
+            {% content_for 'block', type: 'heading', id: 'steps-heading' %}
+        </div>
+
+        <div class="sn-steps__grid">
+            {% content_for 'blocks' %}
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Steps",
+  "tag": "section",
+  "class": "sn-steps",
+  "max_blocks": 4,
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "#f8f4ff"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Steps",
+      "category": "Custom",
+      "settings": {
+        "background": "#f8f4ff",
+        "padding_vertical": 72,
+        "padding_horizontal": 24,
+        "max_width": 1240
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "id": "steps-heading",
+          "static": true,
+          "settings": {
+            "text": "Membership in Three Quick Steps",
+            "size_desktop": 40,
+            "size_mobile": 28,
+            "font_weight": 800,
+            "letter_spacing": -1,
+            "text_color": "#241333",
+            "accent_color": "#241333",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "1",
+            "media_text_size": 18,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Create your account.",
+            "text": "<p>Sign up in under a minute and unlock your perks.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 20,
+            "heading_size_mobile": 18,
+            "heading_color": "#241333",
+            "text_size_desktop": 16,
+            "text_size_mobile": 15,
+            "text_color": "#6e5c7a",
+            "media_text_width": 42
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "2",
+            "media_text_size": 18,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Claim your credit.",
+            "text": "<p>Your monthly credit lands automatically.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 20,
+            "heading_size_mobile": 18,
+            "heading_color": "#241333",
+            "text_size_desktop": 16,
+            "text_size_mobile": 15,
+            "text_color": "#6e5c7a",
+            "media_text_width": 42
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "3",
+            "media_text_size": 18,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#f59e0b",
+            "media_text_radius": 50,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Shop and enjoy.",
+            "text": "<p>Apply your credit at checkout.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 20,
+            "heading_size_mobile": 18,
+            "heading_color": "#241333",
+            "text_size_desktop": 16,
+            "text_size_mobile": 15,
+            "text_color": "#6e5c7a",
+            "media_text_width": 42
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,124 @@
+{% liquid
+    assign settings = section.settings
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} .sn-cancel {
+    background: {{ settings.background }};
+    padding: {{ settings.padding_vertical }}px {{ settings.padding_horizontal }}px;
+}
+
+#shopify-section-{{ section.id }} .sn-cancel__inner {
+    max-width: {{ settings.max_width }}px;
+    margin: 0 auto;
+}
+
+#shopify-section-{{ section.id }} .sn-cancel__inner .media-block {
+    border: 1px solid #dcccf5;
+    box-shadow: 0 16px 40px rgba(31, 66, 29, 0.08);
+}
+{% endstyle %}
+
+<div class="sn-cancel">
+    <div class="sn-cancel__inner">
+        {% content_for 'block', type: 'media', id: 'cancel-card' %}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Cancellation",
+  "tag": "section",
+  "class": "sn-cancellation",
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "#faf6ff"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Card max width",
+      "min": 600,
+      "max": 1400,
+      "step": 20,
+      "unit": "px",
+      "default": 1080
+    }
+  ],
+  "presets": [
+    {
+      "name": "Cancellation",
+      "category": "Custom",
+      "settings": {
+        "background": "#faf6ff",
+        "padding_vertical": 64,
+        "padding_horizontal": 24,
+        "max_width": 1080
+      },
+      "blocks": [
+        {
+          "type": "media",
+          "id": "cancel-card",
+          "static": true,
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✕",
+            "media_text_size": 24,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Leave Anytime. No Friction.",
+            "text": "<p>Manage your plan from your account in seconds. No phone calls, no hoops — your benefits stay active until the end of the billing period.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 24,
+            "background": "#f1eaff",
+            "border_radius": 20,
+            "padding_vertical": 32,
+            "padding_horizontal": 32,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 28,
+            "heading_size_mobile": 22,
+            "heading_color": "#241333",
+            "text_size_desktop": 16,
+            "text_size_mobile": 15,
+            "text_color": "#6e5c7a",
+            "media_text_width": 48
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

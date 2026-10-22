@@ -1,0 +1,467 @@
+{% liquid
+    assign settings = section.settings
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} .sn-pricing {
+    background: {{ settings.background }};
+    padding: {{ settings.padding_vertical }}px {{ settings.padding_horizontal }}px;
+    color: #ffffff;
+}
+
+#shopify-section-{{ section.id }} .sn-pricing__inner {
+    max-width: {{ settings.max_width }}px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+#shopify-section-{{ section.id }} .sn-pricing__eyebrow .typography {
+    color: #f0b429;
+}
+
+#shopify-section-{{ section.id }} .sn-pricing__heading {
+    margin-top: 8px;
+}
+
+#shopify-section-{{ section.id }} .sn-pricing__card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-width: 560px;
+    margin: 32px auto 0;
+    padding: 40px 32px 28px;
+    background: #ffffff;
+    border-radius: 24px;
+    color: #241333;
+    text-align: center;
+}
+
+#shopify-section-{{ section.id }} .sn-pricing__card .button-block {
+    justify-content: center;
+}
+
+#shopify-section-{{ section.id }} .sn-pricing__legal {
+    margin-top: 4px;
+}
+
+#shopify-section-{{ section.id }} .sn-pricing__legal .typography {
+    color: #6e5c7a;
+}
+{% endstyle %}
+
+<div class="sn-pricing">
+    <div class="sn-pricing__inner">
+        <div class="sn-pricing__eyebrow">
+            {% content_for 'block', type: 'typography', id: 'pricing-eyebrow' %}
+        </div>
+
+        <div class="sn-pricing__heading">
+            {% content_for 'block', type: 'heading', id: 'pricing-heading' %}
+        </div>
+
+        <div class="sn-pricing__card">
+            {% content_for 'blocks' %}
+
+            <div class="sn-pricing__legal">
+                {% content_for 'block', type: 'typography', id: 'pricing-legal' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Pricing",
+  "tag": "section",
+  "class": "sn-pricing",
+  "max_blocks": 12,
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "linear-gradient(135deg, #201026 0%, #33203f 100%)"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 80
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
+    }
+  ],
+  "blocks": [
+    {
+      "type": "heading"
+    },
+    {
+      "type": "typography"
+    },
+    {
+      "type": "media"
+    },
+    {
+      "type": "button"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Pricing",
+      "category": "Custom",
+      "settings": {
+        "background": "linear-gradient(135deg, #201026 0%, #33203f 100%)",
+        "padding_vertical": 80,
+        "padding_horizontal": 24,
+        "max_width": 1100
+      },
+      "blocks": [
+        {
+          "type": "typography",
+          "id": "pricing-eyebrow",
+          "static": true,
+          "settings": {
+            "content": "<p>MORE PERKS. EVERY MONTH.</p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "enable_highlight_gradient": false,
+            "highlight_gradient": "linear-gradient(90deg, rgba(240, 180, 41, 1) 0%, rgba(240, 180, 41, 1) 100%)",
+            "font_size_desktop": 12,
+            "font_size_mobile": 11,
+            "font_weight": 700,
+            "font_style_italic": false,
+            "letter_spacing": 1,
+            "text_align": "center",
+            "border_width": 0,
+            "border_color": "#e5e5e5",
+            "border_style": "solid",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0
+          }
+        },
+        {
+          "type": "heading",
+          "id": "pricing-heading",
+          "static": true,
+          "settings": {
+            "text": "Make Every Order Go Further",
+            "size_desktop": 48,
+            "size_mobile": 32,
+            "font_weight": 800,
+            "letter_spacing": -1,
+            "text_color": "#ffffff",
+            "accent_color": "#ffffff",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "heading",
+          "settings": {
+            "text": "<strong>$19</strong>/month",
+            "size_desktop": 56,
+            "size_mobile": 40,
+            "font_weight": 800,
+            "letter_spacing": -1,
+            "text_color": "#6d28d9",
+            "accent_color": "#6d28d9",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "typography",
+          "settings": {
+            "content": "<p>That's <strong>$228</strong> a year, back in rewards.</p>",
+            "enable_text_gradient": false,
+            "gradient_color": "#f3ecff",
+            "enable_highlight_gradient": true,
+            "highlight_gradient": "linear-gradient(90deg, rgba(109, 40, 217, 1) 0%, rgba(109, 40, 217, 1) 100%)",
+            "font_size_desktop": 15,
+            "font_size_mobile": 14,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "center",
+            "border_width": 0,
+            "border_color": "#e5e5e5",
+            "border_style": "solid",
+            "border_radius": 8,
+            "padding_vertical": 8,
+            "padding_horizontal": 16
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>$19 credit every month</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#241333",
+            "media_text_width": 22
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>Member prices on everything</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#241333",
+            "media_text_width": 22
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>Priority shipping and order protection</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#241333",
+            "media_text_width": 22
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>Early access to limited drops</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#241333",
+            "media_text_width": 22
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>Extended warranty on eligible items</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#241333",
+            "media_text_width": 22
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>Priority member support</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#241333",
+            "media_text_width": 22
+          }
+        },
+        {
+          "type": "button",
+          "settings": {
+            "label": "Start My Membership",
+            "action": "link",
+            "alignment": "center",
+            "full_width": true,
+            "padding_vertical": 16,
+            "padding_horizontal": 24,
+            "font_size_desktop": 14,
+            "font_size_mobile": 13,
+            "font_weight": 800,
+            "letter_spacing": 0,
+            "text_transform": "uppercase",
+            "background": "#f0b429",
+            "text_color": "#2a1633",
+            "hover_background": "#ffc65c",
+            "hover_text_color": "#2a1633",
+            "hover_animation": "lift",
+            "animation_duration": 200,
+            "border_width": 0,
+            "border_color": "#f0b429",
+            "border_style": "solid",
+            "border_radius": 100
+          }
+        },
+        {
+          "type": "typography",
+          "id": "pricing-legal",
+          "static": true,
+          "settings": {
+            "content": "<p>Renews monthly at $19 until cancelled. Cancel anytime, at least 72 hours before your next billing date. <a href=\"#\">Manage Membership</a></p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "enable_highlight_gradient": false,
+            "highlight_gradient": "linear-gradient(90deg, rgba(109, 40, 217, 1) 0%, rgba(109, 40, 217, 1) 100%)",
+            "font_size_desktop": 12,
+            "font_size_mobile": 11,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "center",
+            "border_width": 0,
+            "border_color": "#e5e5e5",
+            "border_style": "solid",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
