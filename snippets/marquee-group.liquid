@@ -1,0 +1,21 @@
+{% comment %}
+  Renders one group of repeated marquee items.
+
+  Accepts:
+  - text: {String} The text to repeat (required)
+  - separator: {String} Separator rendered between items (optional)
+  - repeat: {Number} How many times to repeat the text in this group (required)
+  - hidden: {Boolean} Marks the group as decorative for assistive technology (optional)
+
+  Usage:
+  {% render 'marquee-group', text: marqueeText, separator: separator, repeat: repeat %}
+{% endcomment %}
+
+<div class="marquee__group"{% if hidden %} aria-hidden="true"{% endif %}>
+  {%- for i in (1..repeat) -%}
+    <span class="marquee__item">{{ text }}</span>
+    {%- if separator != blank -%}
+      <span class="marquee__item marquee__item--separator" aria-hidden="true">{{ separator }}</span>
+    {%- endif -%}
+  {%- endfor -%}
+</div>
