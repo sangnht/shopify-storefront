@@ -1,0 +1,38 @@
+{% liquid 
+    assign sectionId = section.id
+    assign settings = block.settings
+%}
+
+{% stylesheet %}
+
+{% endstylesheet %}
+
+<div id="{{ sectionId }}"></div>
+
+{% schema %}
+{
+  "name": "Content and media",
+  "target": "section",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content",
+      "default": "<p>Write something here...</p>"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "image_picker",
+      "id": "media",
+      "label": "Image"
+    }
+  ]
+}
+{% endschema %}
