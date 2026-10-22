@@ -1,0 +1,384 @@
+{% liquid
+    assign settings = section.settings
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} .sn-products {
+    background: {{ settings.background }};
+    padding: {{ settings.padding_vertical }}px {{ settings.padding_horizontal }}px;
+    color: #241333;
+}
+
+#shopify-section-{{ section.id }} .sn-products__inner {
+    max-width: {{ settings.max_width }}px;
+    margin: 0 auto;
+}
+
+#shopify-section-{{ section.id }} .sn-products__heading {
+    text-align: center;
+}
+
+#shopify-section-{{ section.id }} .sn-products__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 40px;
+}
+
+#shopify-section-{{ section.id }} .sn-products__grid .product-block {
+    height: 100%;
+    overflow: hidden;
+    gap: 0;
+}
+
+#shopify-section-{{ section.id }} .sn-products__grid .product-block__info {
+    padding: 24px;
+}
+
+#shopify-section-{{ section.id }} .sn-products__copy {
+    max-width: 720px;
+    margin: 40px auto 0;
+    text-align: center;
+}
+
+#shopify-section-{{ section.id }} .sn-products__description .typography {
+    color: #241333;
+}
+
+#shopify-section-{{ section.id }} .sn-products__note {
+    margin-top: 8px;
+}
+
+#shopify-section-{{ section.id }} .sn-products__note .typography {
+    color: #6e5c7a;
+}
+
+#shopify-section-{{ section.id }} .sn-products__cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 24px;
+}
+
+@media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .sn-products__grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media screen and (min-width: 990px) {
+    #shopify-section-{{ section.id }} .sn-products__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+{% endstyle %}
+
+<div class="sn-products">
+    <div class="sn-products__inner">
+        <div class="sn-products__heading">
+            {% content_for 'block', type: 'heading', id: 'products-heading' %}
+        </div>
+
+        <div class="sn-products__grid">
+            {% content_for 'blocks' %}
+        </div>
+
+        <div class="sn-products__copy">
+            <div class="sn-products__description">
+                {% content_for 'block', type: 'typography', id: 'products-description' %}
+            </div>
+            <div class="sn-products__note">
+                {% content_for 'block', type: 'typography', id: 'products-note' %}
+            </div>
+        </div>
+
+        <div class="sn-products__cta">
+            {% content_for 'block', type: 'button', id: 'products-cta' %}
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Product cards",
+  "tag": "section",
+  "class": "sn-product-cards-section",
+  "max_blocks": 6,
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "#f5f0fb"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
+    }
+  ],
+  "blocks": [
+    {
+      "type": "product"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product cards",
+      "category": "Custom",
+      "settings": {
+        "background": "#f5f0fb",
+        "padding_vertical": 72,
+        "padding_horizontal": 24,
+        "max_width": 1240
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "id": "products-heading",
+          "static": true,
+          "settings": {
+            "text": "Lorem Ipsum Dolor <strong>Sit Amet</strong>",
+            "size_desktop": 40,
+            "size_mobile": 30,
+            "font_weight": 800,
+            "letter_spacing": -1,
+            "text_color": "#241333",
+            "accent_color": "#f0b429",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "show_vendor": false,
+            "show_title": true,
+            "show_price": true,
+            "show_rating": false,
+            "show_button": false,
+            "price_layout": "savings",
+            "show_savings": true,
+            "savings_label": "Your credit",
+            "discount_value": 3000,
+            "savings_background": "#f1eaff",
+            "savings_text_color": "#6d28d9",
+            "show_divider": true,
+            "divider_color": "#e6dcf2",
+            "final_price_label": "YOU PAY",
+            "final_price_color": "#6d28d9",
+            "final_price_size": 30,
+            "alignment": "left",
+            "image_aspect_ratio": "4/3",
+            "image_border_radius": 0,
+            "show_second_image": false,
+            "card_background": "#ffffff",
+            "card_shadow_opacity": 8,
+            "card_border_width": 0,
+            "card_border_color": "#e6dcf2",
+            "card_border_style": "solid",
+            "card_border_radius": 20,
+            "card_padding_vertical": 0,
+            "card_padding_horizontal": 0,
+            "title_size_desktop": 18,
+            "title_size_mobile": 16,
+            "title_font_weight": 700,
+            "title_color": "#241333",
+            "vendor_color": "#6e5c7a",
+            "price_color": "#241333",
+            "sale_price_color": "#6d28d9",
+            "vendor_size": 12,
+            "price_size": 14,
+            "total_label_size": 12
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "show_vendor": false,
+            "show_title": true,
+            "show_price": true,
+            "show_rating": false,
+            "show_button": false,
+            "price_layout": "savings",
+            "show_savings": true,
+            "savings_label": "Your credit",
+            "discount_value": 3000,
+            "savings_background": "#f1eaff",
+            "savings_text_color": "#6d28d9",
+            "show_divider": true,
+            "divider_color": "#e6dcf2",
+            "final_price_label": "YOU PAY",
+            "final_price_color": "#6d28d9",
+            "final_price_size": 30,
+            "alignment": "left",
+            "image_aspect_ratio": "4/3",
+            "image_border_radius": 0,
+            "show_second_image": false,
+            "card_background": "#ffffff",
+            "card_shadow_opacity": 8,
+            "card_border_width": 0,
+            "card_border_color": "#e6dcf2",
+            "card_border_style": "solid",
+            "card_border_radius": 20,
+            "card_padding_vertical": 0,
+            "card_padding_horizontal": 0,
+            "title_size_desktop": 18,
+            "title_size_mobile": 16,
+            "title_font_weight": 700,
+            "title_color": "#241333",
+            "vendor_color": "#6e5c7a",
+            "price_color": "#241333",
+            "sale_price_color": "#6d28d9",
+            "vendor_size": 12,
+            "price_size": 14,
+            "total_label_size": 12
+          }
+        },
+        {
+          "type": "product",
+          "settings": {
+            "show_vendor": false,
+            "show_title": true,
+            "show_price": true,
+            "show_rating": false,
+            "show_button": false,
+            "price_layout": "savings",
+            "show_savings": true,
+            "savings_label": "Your credit",
+            "discount_value": 3000,
+            "savings_background": "#f1eaff",
+            "savings_text_color": "#6d28d9",
+            "show_divider": true,
+            "divider_color": "#e6dcf2",
+            "final_price_label": "YOU PAY",
+            "final_price_color": "#6d28d9",
+            "final_price_size": 30,
+            "alignment": "left",
+            "image_aspect_ratio": "4/3",
+            "image_border_radius": 0,
+            "show_second_image": false,
+            "card_background": "#ffffff",
+            "card_shadow_opacity": 8,
+            "card_border_width": 0,
+            "card_border_color": "#e6dcf2",
+            "card_border_style": "solid",
+            "card_border_radius": 20,
+            "card_padding_vertical": 0,
+            "card_padding_horizontal": 0,
+            "title_size_desktop": 18,
+            "title_size_mobile": 16,
+            "title_font_weight": 700,
+            "title_color": "#241333",
+            "vendor_color": "#6e5c7a",
+            "price_color": "#241333",
+            "sale_price_color": "#6d28d9",
+            "vendor_size": 12,
+            "price_size": 14,
+            "total_label_size": 12
+          }
+        },
+        {
+          "type": "typography",
+          "id": "products-description",
+          "static": true,
+          "settings": {
+            "content": "<p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s.</p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "enable_highlight_gradient": false,
+            "highlight_gradient": "linear-gradient(90deg, rgba(240, 180, 41, 1) 0%, rgba(240, 180, 41, 1) 100%)",
+            "font_size_desktop": 16,
+            "font_size_mobile": 15,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "center",
+            "border_width": 0,
+            "border_color": "#e6dcf2",
+            "border_style": "solid",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0
+          }
+        },
+        {
+          "type": "typography",
+          "id": "products-note",
+          "static": true,
+          "settings": {
+            "content": "<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "enable_highlight_gradient": false,
+            "highlight_gradient": "linear-gradient(90deg, rgba(240, 180, 41, 1) 0%, rgba(240, 180, 41, 1) 100%)",
+            "font_size_desktop": 14,
+            "font_size_mobile": 13,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "center",
+            "border_width": 0,
+            "border_color": "#e6dcf2",
+            "border_style": "solid",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0
+          }
+        },
+        {
+          "type": "button",
+          "id": "products-cta",
+          "static": true,
+          "settings": {
+            "label": "Lorem Ipsum",
+            "action": "link",
+            "alignment": "center",
+            "full_width": false,
+            "padding_vertical": 18,
+            "padding_horizontal": 36,
+            "font_size_desktop": 15,
+            "font_size_mobile": 14,
+            "font_weight": 800,
+            "letter_spacing": 0,
+            "text_transform": "uppercase",
+            "background": "#f0b429",
+            "text_color": "#2a1633",
+            "hover_background": "#ffc65c",
+            "hover_text_color": "#2a1633",
+            "hover_animation": "lift",
+            "animation_duration": 200,
+            "border_width": 0,
+            "border_color": "#f0b429",
+            "border_style": "solid",
+            "border_radius": 100
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
