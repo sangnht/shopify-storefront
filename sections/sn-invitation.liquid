@@ -63,10 +63,24 @@
   "class": "sn-invitation",
   "settings": [
     {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
       "type": "color_background",
       "id": "background",
       "label": "Background",
       "default": "linear-gradient(115deg, #2a1633 0%, #3b2147 58%, #4a2a5c 100%)"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 900
     },
     {
       "type": "range",
@@ -87,16 +101,6 @@
       "step": 8,
       "unit": "px",
       "default": 24
-    },
-    {
-      "type": "range",
-      "id": "max_width",
-      "label": "Max width",
-      "min": 600,
-      "max": 1600,
-      "step": 20,
-      "unit": "px",
-      "default": 900
     }
   ],
   "presets": [

@@ -67,10 +67,24 @@
   "max_blocks": 9,
   "settings": [
     {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
       "type": "color_background",
       "id": "background",
       "label": "Background",
       "default": "#f8f4ff"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
     },
     {
       "type": "range",
@@ -91,16 +105,6 @@
       "step": 8,
       "unit": "px",
       "default": 24
-    },
-    {
-      "type": "range",
-      "id": "max_width",
-      "label": "Max width",
-      "min": 600,
-      "max": 1600,
-      "step": 20,
-      "unit": "px",
-      "default": 1240
     }
   ],
   "blocks": [

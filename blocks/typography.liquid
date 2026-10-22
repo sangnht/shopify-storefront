@@ -98,31 +98,17 @@
   "settings": [
     {
       "type": "header",
-      "content": "Settings"
+      "content": "Content"
     },
     {
-      "type": "checkbox",
-      "id": "enable_text_gradient",
-      "label": "Enable Text Gradient",
-      "default": false
+      "type": "richtext",
+      "id": "content",
+      "label": "Text",
+      "default": "<p>This is a Typography Block</p>"
     },
     {
-      "type": "color_background",
-      "id": "gradient_color",
-      "label": "Gradient Color",
-      "default": "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
-    },
-    {
-      "type": "checkbox",
-      "id": "enable_highlight_gradient",
-      "label": "Enable Highlight Text Gradient",
-      "default": false
-    },
-    {
-      "type": "color_background",
-      "id": "highlight_gradient",
-      "label": "Highlight gradient",
-      "default": "linear-gradient(90deg, rgba(183, 227, 74, 1) 0%, rgba(76, 175, 80, 1) 55%, rgba(247, 224, 75, 1) 100%)"
+      "type": "header",
+      "content": "Typography"
     },
     {
       "type": "range",
@@ -186,6 +172,38 @@
         }
       ],
       "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Text gradient"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_text_gradient",
+      "label": "Enable Text Gradient",
+      "default": false
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_color",
+      "label": "Gradient Color",
+      "default": "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
+    },
+    {
+      "type": "header",
+      "content": "Highlight gradient"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_highlight_gradient",
+      "label": "Enable Highlight Text Gradient",
+      "default": false
+    },
+    {
+      "type": "color_background",
+      "id": "highlight_gradient",
+      "label": "Highlight gradient",
+      "default": "linear-gradient(90deg, rgba(183, 227, 74, 1) 0%, rgba(76, 175, 80, 1) 55%, rgba(247, 224, 75, 1) 100%)"
     },
     {
       "type": "header",
@@ -262,16 +280,6 @@
       "step": 4,
       "unit": "px",
       "default": 0
-    },
-    {
-      "type": "header",
-      "content": "Content"
-    },
-    {
-      "type": "richtext",
-      "id": "content",
-      "label": "Text",
-      "default": "<p>This is a Typography Block</p>"
     }
   ],
   "presets": [
