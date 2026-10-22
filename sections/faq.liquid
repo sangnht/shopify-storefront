@@ -1,0 +1,207 @@
+{% liquid
+    assign settings = section.settings
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} .sn-faq {
+    background: {{ settings.background }};
+    padding: {{ settings.padding_vertical }}px {{ settings.padding_horizontal }}px;
+    color: #241333;
+}
+
+#shopify-section-{{ section.id }} .sn-faq__inner {
+    max-width: {{ settings.max_width }}px;
+    margin: 0 auto;
+}
+
+#shopify-section-{{ section.id }} .sn-faq__heading {
+    margin-bottom: 40px;
+    text-align: center;
+}
+
+#shopify-section-{{ section.id }} .sn-faq__heading .heading-block {
+    color: #241333;
+}
+
+#shopify-section-{{ section.id }} .sn-faq__list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+#shopify-section-{{ section.id }} .sn-faq__support {
+    margin-top: 32px;
+    padding: 32px;
+    background: #ffffff;
+    border-radius: 16px;
+    border: 1px solid #e6dcf2;
+}
+
+#shopify-section-{{ section.id }} .sn-faq__support-text {
+    margin-top: 12px;
+}
+{% endstyle %}
+
+<div class="sn-faq">
+    <div class="sn-faq__inner">
+        <div class="sn-faq__heading">
+            {% content_for 'block', type: 'heading', id: 'faq-heading' %}
+        </div>
+
+        <div class="sn-faq__list">
+            {% content_for 'blocks' %}
+        </div>
+
+        <div class="sn-faq__support">
+            {% content_for 'block', type: 'heading', id: 'faq-support-heading' %}
+            <div class="sn-faq__support-text">
+                {% content_for 'block', type: 'typography', id: 'faq-support-text' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "FAQ",
+  "tag": "section",
+  "class": "sn-faq-section",
+  "max_blocks": 3,
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "#f5f0fb"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1200
+    }
+  ],
+  "blocks": [
+    {
+      "type": "accordion"
+    }
+  ],
+  "presets": [
+    {
+      "name": "FAQ",
+      "category": "Custom",
+      "settings": {
+        "background": "#f5f0fb",
+        "padding_vertical": 72,
+        "padding_horizontal": 24,
+        "max_width": 1200
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "id": "faq-heading",
+          "static": true,
+          "settings": {
+            "text": "Your Membership Questions, Answered",
+            "size_desktop": 40,
+            "size_mobile": 28,
+            "font_weight": 800,
+            "letter_spacing": -1,
+            "text_color": "#241333",
+            "accent_color": "#241333",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "accordion",
+          "settings": {
+            "icon_style": "plus_minus",
+            "icon_position": "right",
+            "icon_size": 20,
+            "icon_color": "#6d28d9",
+            "animation_duration": 300,
+            "item_gap": 16,
+            "item_padding_vertical": 20,
+            "item_padding_horizontal": 24,
+            "item_border_width": 1,
+            "item_border_color": "#e6dcf2",
+            "item_border_style": "solid",
+            "item_border_radius": 16,
+            "item_background": "#ffffff",
+            "heading_font_size_desktop": 16,
+            "heading_font_size_mobile": 15,
+            "heading_font_weight": 600,
+            "heading_color": "#241333",
+            "content_font_size_desktop": 15,
+            "content_font_size_mobile": 14,
+            "content_color": "#6e5c7a"
+          }
+        },
+        {
+          "type": "heading",
+          "id": "faq-support-heading",
+          "static": true,
+          "settings": {
+            "text": "Still need a hand?",
+            "size_desktop": 24,
+            "size_mobile": 20,
+            "font_weight": 800,
+            "letter_spacing": 0,
+            "text_color": "#6d28d9",
+            "accent_color": "#6d28d9",
+            "text_alignment": "left"
+          }
+        },
+        {
+          "type": "typography",
+          "id": "faq-support-text",
+          "static": true,
+          "settings": {
+            "content": "<p>Email: hello@yourstore.com<br>Phone: 555-013-4477<br>Support hours: Monday to Friday, 9am to 5pm PT</p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "enable_highlight_gradient": false,
+            "highlight_gradient": "linear-gradient(90deg, rgba(109, 40, 217, 1) 0%, rgba(109, 40, 217, 1) 100%)",
+            "font_size_desktop": 16,
+            "font_size_mobile": 15,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "left",
+            "border_width": 0,
+            "border_color": "#e5e5e5",
+            "border_style": "solid",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

@@ -1,0 +1,385 @@
+{% liquid
+    assign settings = section.settings
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} .sn-benefits {
+    background: {{ settings.background }};
+    padding: {{ settings.padding_vertical }}px {{ settings.padding_horizontal }}px;
+    color: #241333;
+}
+
+#shopify-section-{{ section.id }} .sn-benefits__inner {
+    max-width: {{ settings.max_width }}px;
+    margin: 0 auto;
+}
+
+#shopify-section-{{ section.id }} .sn-benefits__heading {
+    text-align: center;
+}
+
+#shopify-section-{{ section.id }} .sn-benefits__grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 24px;
+    margin-top: 40px;
+}
+
+#shopify-section-{{ section.id }} .sn-benefits__grid .media-block {
+    width: 100%;
+    border: 1px solid #eadff5;
+}
+
+#shopify-section-{{ section.id }} .sn-benefits__cta {
+    display: flex;
+    justify-content: center;
+    margin-top: 40px;
+}
+
+@media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .sn-benefits__grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+{% endstyle %}
+
+<div class="sn-benefits">
+    <div class="sn-benefits__inner">
+        <div class="sn-benefits__heading">
+            {% content_for 'block', type: 'heading', id: 'benefits-heading' %}
+        </div>
+
+        <div class="sn-benefits__grid">
+            {% content_for 'blocks' %}
+        </div>
+
+        <div class="sn-benefits__cta">
+            {% content_for 'block', type: 'button', id: 'benefits-cta' %}
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Benefits",
+  "tag": "section",
+  "class": "sn-benefits-section",
+  "max_blocks": 9,
+  "settings": [
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "#f8f4ff"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1240
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Benefits",
+      "category": "Custom",
+      "settings": {
+        "background": "#f8f4ff",
+        "padding_vertical": 72,
+        "padding_horizontal": 24,
+        "max_width": 1240
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "id": "benefits-heading",
+          "static": true,
+          "settings": {
+            "text": "More Ways to Get More",
+            "size_desktop": 40,
+            "size_mobile": 28,
+            "font_weight": 800,
+            "letter_spacing": -1,
+            "text_color": "#241333",
+            "accent_color": "#241333",
+            "text_alignment": "center"
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "🏷️",
+            "media_text_size": 20,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 12,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Member-only prices",
+            "text": "<p>Members pay less across the store, on every order.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "#ffffff",
+            "border_radius": 16,
+            "padding_vertical": 24,
+            "padding_horizontal": 24,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 18,
+            "heading_size_mobile": 16,
+            "heading_color": "#241333",
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#6e5c7a",
+            "media_text_width": 44
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "⚡",
+            "media_text_size": 20,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 12,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Your orders move first",
+            "text": "<p>Orders skip the queue and ship sooner.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "#ffffff",
+            "border_radius": 16,
+            "padding_vertical": 24,
+            "padding_horizontal": 24,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 18,
+            "heading_size_mobile": 16,
+            "heading_color": "#241333",
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#6e5c7a",
+            "media_text_width": 44
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "🛡️",
+            "media_text_size": 20,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 12,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Every order covered",
+            "text": "<p>Lost, damaged or stolen? We replace or refund it — fully covered.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "#ffffff",
+            "border_radius": 16,
+            "padding_vertical": 24,
+            "padding_horizontal": 24,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 18,
+            "heading_size_mobile": 16,
+            "heading_color": "#241333",
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#6e5c7a",
+            "media_text_width": 44
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "⭐",
+            "media_text_size": 20,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#f59e0b",
+            "media_text_radius": 12,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "First access to drops",
+            "text": "<p>Limited releases, early access, and first pick.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "#fff8e6",
+            "border_radius": 16,
+            "padding_vertical": 24,
+            "padding_horizontal": 24,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 18,
+            "heading_size_mobile": 16,
+            "heading_color": "#241333",
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#6e5c7a",
+            "media_text_width": 44
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "∞",
+            "media_text_size": 24,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 12,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Built to last",
+            "text": "<p>Eligible items come with lifetime coverage. Buy once, stay covered.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "#ffffff",
+            "border_radius": 16,
+            "padding_vertical": 24,
+            "padding_horizontal": 24,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 18,
+            "heading_size_mobile": 16,
+            "heading_color": "#241333",
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#6e5c7a",
+            "media_text_width": 44
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "🎧",
+            "media_text_size": 20,
+            "media_text_color": "#ffffff",
+            "media_text_background": "#6d28d9",
+            "media_text_radius": 12,
+            "media_text_padding": 12,
+            "show_text": true,
+            "heading": "Skip the queue",
+            "text": "<p>Reach a real person by phone or email, no waiting.</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "vertical",
+            "media_position": "left",
+            "vertical_alignment": "top",
+            "stack_on_mobile": true,
+            "gap": 16,
+            "background": "#ffffff",
+            "border_radius": 16,
+            "padding_vertical": 24,
+            "padding_horizontal": 24,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "heading_size_desktop": 18,
+            "heading_size_mobile": 16,
+            "heading_color": "#241333",
+            "text_size_desktop": 15,
+            "text_size_mobile": 14,
+            "text_color": "#6e5c7a",
+            "media_text_width": 44
+          }
+        },
+        {
+          "type": "button",
+          "id": "benefits-cta",
+          "static": true,
+          "settings": {
+            "label": "Start My Membership",
+            "action": "link",
+            "alignment": "center",
+            "full_width": false,
+            "padding_vertical": 18,
+            "padding_horizontal": 36,
+            "font_size_desktop": 15,
+            "font_size_mobile": 14,
+            "font_weight": 800,
+            "letter_spacing": 0,
+            "text_transform": "uppercase",
+            "background": "#f0b429",
+            "text_color": "#2a1633",
+            "hover_background": "#ffc65c",
+            "hover_text_color": "#2a1633",
+            "hover_animation": "lift",
+            "animation_duration": 200,
+            "border_width": 0,
+            "border_color": "#f0b429",
+            "border_style": "solid",
+            "border_radius": 100
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}
