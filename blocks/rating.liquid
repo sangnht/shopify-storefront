@@ -1,0 +1,152 @@
+{% liquid
+    assign blockId = block.id
+    assign settings = block.settings
+
+    assign stars = settings.stars | default: 5
+    assign starColor = settings.star_color | default: '#ffcf3f'
+    assign starSize = settings.star_size | default: 16
+    assign textColor = settings.text_color | default: '#1a1a1a'
+    assign textSize = settings.text_size | default: 15
+    assign gap = settings.gap | default: 10
+    assign textAlignment = settings.text_alignment | default: 'left'
+
+    case textAlignment
+        when 'center'
+            assign justifyContent = 'center'
+        when 'right'
+            assign justifyContent = 'flex-end'
+        else
+            assign justifyContent = 'flex-start'
+    endcase
+%}
+
+{% style %}
+#{{ blockId }}.rating-block {
+    display: flex;
+    align-items: center;
+    justify-content: {{ justifyContent }};
+    gap: {{ gap }}px;
+    font-size: {{ textSize }}px;
+    line-height: 1.3;
+    color: {{ textColor }};
+}
+
+#{{ blockId }} .rating-block__stars {
+    color: {{ starColor }};
+    font-size: {{ starSize }}px;
+    letter-spacing: 0.12em;
+    line-height: 1;
+    white-space: nowrap;
+}
+{% endstyle %}
+
+<div id="{{ blockId }}" class="rating-block" {{ block.shopify_attributes }}>
+    <span class="rating-block__stars" aria-hidden="true">
+        {%- for i in (1..stars) -%}★{%- endfor -%}
+    </span>
+    <span class="visually-hidden">Rated {{ stars }} out of 5</span>
+    {%- unless settings.text == blank -%}
+        <span class="rating-block__text">{{ settings.text }}</span>
+    {%- endunless -%}
+</div>
+
+{% schema %}
+{
+  "name": "Rating",
+  "settings": [
+    {
+      "type": "range",
+      "id": "stars",
+      "label": "Stars",
+      "min": 1,
+      "max": 5,
+      "step": 1,
+      "default": 5
+    },
+    {
+      "type": "color",
+      "id": "star_color",
+      "label": "Star color",
+      "default": "#ffcf3f"
+    },
+    {
+      "type": "range",
+      "id": "star_size",
+      "label": "Star size",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "text",
+      "id": "text",
+      "label": "Text",
+      "default": "Trusted by 1,000+ happy customers"
+    },
+    {
+      "type": "range",
+      "id": "text_size",
+      "label": "Text size",
+      "min": 11,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Space between stars and text",
+      "min": 2,
+      "max": 24,
+      "step": 2,
+      "unit": "px",
+      "default": 10
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Rating",
+      "category": "Custom",
+      "settings": {
+        "stars": 5,
+        "star_color": "#ffcf3f",
+        "star_size": 16,
+        "text": "Trusted by 1,000+ happy customers",
+        "text_size": 15,
+        "text_color": "#1a1a1a",
+        "gap": 10,
+        "text_alignment": "left"
+      }
+    }
+  ]
+}
+{% endschema %}

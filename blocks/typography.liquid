@@ -1,4 +1,4 @@
-{% liquid 
+{% liquid
     assign sectionId = block.id
     assign settings = block.settings
 
@@ -14,33 +14,82 @@
 
     assign enableTextGradient = settings.enable_text_gradient | default: false
     assign gradientColor = settings.gradient_color | default: "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
-    
+
     assign textAlign = settings.text_align | default: "left"
+
+    # Box
+    assign enableHighlightGradient = settings.enable_highlight_gradient | default: false
+    assign highlightGradient = settings.highlight_gradient | default: 'linear-gradient(90deg, rgba(183, 227, 74, 1) 0%, rgba(76, 175, 80, 1) 55%, rgba(247, 224, 75, 1) 100%)'
+    assign borderWidth = settings.border_width | default: 0
+    assign borderStyle = settings.border_style | default: 'solid'
+    assign borderColor = settings.border_color | default: '#e5e5e5'
+    assign borderRadius = settings.border_radius | default: 0
+    assign paddingVertical = settings.padding_vertical | default: 0
+    assign paddingHorizontal = settings.padding_horizontal | default: 0
 %}
 
 {% style %}
 #{{ sectionId }}.typography {
     text-align: {{ textAlign }};
-    p {
-        font-size: clamp({{ fontSizeMobile }}px, 2.5vw, {{ fontSizeDesktop }}px);
-        line-height: 1.5;
-        font-weight: {{ fontWeight }};
-        font-style: {{ fontStyleItalic }};
-        letter-spacing: {{ letterSpacing }}px;
+    padding: {{ paddingVertical }}px {{ paddingHorizontal }}px;
+    border: {{ borderWidth }}px {{ borderStyle }} {{ borderColor }};
+    border-radius: {{ borderRadius }}px;
+    {%- if enableTextGradient %}
+        background: transparent;
+    {%- else %}
         background: {{ gradientColor }};
-        margin: 0;
-        {% if enableTextGradient %}
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        {% else %}
-            display: inline;
-        {% endif %}
+    {%- endif %}
+    font-size: clamp({{ fontSizeMobile }}px, 2.5vw, {{ fontSizeDesktop }}px);
+    line-height: 1.5;
+    font-weight: {{ fontWeight }};
+    font-style: {{ fontStyleItalic }};
+    letter-spacing: {{ letterSpacing }}px;
+    color: inherit;
+}
+
+#{{ sectionId }}.typography p {
+    margin: 0;
+    font-size: inherit;
+    line-height: inherit;
+    font-weight: inherit;
+    font-style: inherit;
+    letter-spacing: inherit;
+}
+
+#{{ sectionId }}.typography strong {
+    {%- unless enableHighlightGradient %}
+        background: {{ highlightGradient }};
+    {%- endunless %}
+}
+
+{%- if enableHighlightGradient %}
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+    #{{ sectionId }}.typography strong {
+        background: {{ highlightGradient }};
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
     }
 }
+{%- endif %}
+
+#{{ sectionId }}.typography a {
+    color: inherit;
+}
+
+{% if enableTextGradient %}
+#{{ sectionId }}.typography,
+#{{ sectionId }}.typography p {
+    background: {{ gradientColor }};
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+{% endif %}
 {% endstyle %}
 
-<div id="{{ sectionId }}" class="typography">
-    <p>{{ settings.content }}</p>
+<div id="{{ sectionId }}" class="typography" {{ block.shopify_attributes }}>
+    {{ settings.content }}
 </div>
 
 {% schema %}
@@ -48,111 +97,207 @@
   "name": "Typography",
   "settings": [
     {
-        "type": "header",
-        "content": "Settings"
+      "type": "header",
+      "content": "Settings"
     },
     {
-        "type": "checkbox",
-        "id": "enable_text_gradient",
-        "label": "Enable Text Gradient",
-        "default": false
+      "type": "checkbox",
+      "id": "enable_text_gradient",
+      "label": "Enable Text Gradient",
+      "default": false
     },
     {
-        "type": "color_background",
-        "id": "gradient_color",
-        "label": "Gradient Color",
-        "default": "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
+      "type": "color_background",
+      "id": "gradient_color",
+      "label": "Gradient Color",
+      "default": "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
     },
     {
-        "type": "range",
-        "id": "font_size_desktop",
-        "label": "Font Size (Desktop)",
-        "min": 10,
-        "max": 100,
-        "step": 1,
-        "default": 16
+      "type": "checkbox",
+      "id": "enable_highlight_gradient",
+      "label": "Enable Highlight Text Gradient",
+      "default": false
     },
     {
-        "type": "range",
-        "id": "font_size_mobile",
-        "label": "Font Size (Mobile)",
-        "min": 10,
-        "max": 100,
-        "step": 1,
-        "default": 16
+      "type": "color_background",
+      "id": "highlight_gradient",
+      "label": "Highlight gradient",
+      "default": "linear-gradient(90deg, rgba(183, 227, 74, 1) 0%, rgba(76, 175, 80, 1) 55%, rgba(247, 224, 75, 1) 100%)"
     },
     {
-        "type": "range",
-        "id": "font_weight",
-        "label": "Font Weight",
-        "min": 100,
-        "max": 900,
-        "step": 100,
-        "default": 400
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Font Size (Desktop)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 16
     },
     {
-        "type": "checkbox",
-        "id": "font_style_italic",
-        "label": "Italic",
-        "default": false
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Font Size (Mobile)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "default": 16
     },
     {
-        "type": "range",
-        "id": "letter_spacing",
-        "label": "Letter Spacing",
-        "min": -5,
-        "max": 20,
-        "step": 1,
-        "unit": "px",
-        "default": 0
+      "type": "range",
+      "id": "font_weight",
+      "label": "Font Weight",
+      "min": 100,
+      "max": 900,
+      "step": 100,
+      "default": 400
     },
     {
-        "type": "select",
-        "id": "text_align",
-        "label": "Text Align",
-        "options": [
-            {
-                "value": "left",
-                "label": "Left"
-            },
-            {
-                "value": "center",
-                "label": "Center"
-            },
-            {
-                "value": "right",
-                "label": "Right"
-            }
-        ],
-        "default": "left"
+      "type": "checkbox",
+      "id": "font_style_italic",
+      "label": "Italic",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter Spacing",
+      "min": -5,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "text_align",
+      "label": "Text Align",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Box"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#e5e5e5",
+      "visible_if": "{{ block.settings.border_width > 0 }}"
+    },
+    {
+      "type": "select",
+      "id": "border_style",
+      "label": "Border style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid"
+        },
+        {
+          "value": "dashed",
+          "label": "Dashed"
+        },
+        {
+          "value": "dotted",
+          "label": "Dotted"
+        },
+        {
+          "value": "double",
+          "label": "Double"
+        }
+      ],
+      "default": "solid",
+      "visible_if": "{{ block.settings.border_width > 0 }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 48,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 64,
+      "step": 4,
+      "unit": "px",
+      "default": 0
     },
     {
       "type": "header",
       "content": "Content"
     },
     {
-      "type": "textarea",
+      "type": "richtext",
       "id": "content",
       "label": "Text",
-      "default": "This is a Typography Block"
+      "default": "<p>This is a Typography Block</p>"
     }
   ],
-    "presets": [
-        {
-            "name": "Typography",
-            "category": "Custom",
-            "settings": {
-                "enable_text_gradient": false,
-                "gradient_color": "transparent",
-                "font_size_desktop": 16,
-                "font_size_mobile": 16,
-                "font_weight": 400,
-                "font_style_italic": false,
-                "letter_spacing": 0,
-                "text_align": "left",
-                "content": "This is a Typography Block"
-            }
-        }
-    ]
+  "presets": [
+    {
+      "name": "Typography",
+      "category": "Custom",
+      "settings": {
+        "enable_text_gradient": false,
+        "gradient_color": "transparent",
+        "enable_highlight_gradient": false,
+        "highlight_gradient": "linear-gradient(90deg, rgba(183, 227, 74, 1) 0%, rgba(76, 175, 80, 1) 55%, rgba(247, 224, 75, 1) 100%)",
+        "font_size_desktop": 16,
+        "font_size_mobile": 16,
+        "font_weight": 400,
+        "font_style_italic": false,
+        "letter_spacing": 0,
+        "text_align": "left",
+        "border_width": 0,
+        "border_color": "#e5e5e5",
+        "border_style": "solid",
+        "border_radius": 0,
+        "padding_vertical": 0,
+        "padding_horizontal": 0,
+        "content": "<p>This is a Typography Block</p>"
+      }
+    }
+  ]
 }
 {% endschema %}

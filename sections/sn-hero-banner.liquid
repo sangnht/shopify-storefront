@@ -1,0 +1,597 @@
+{% liquid
+    assign settings = section.settings
+    assign halfGap = settings.column_gap | divided_by: 2.0
+
+    case settings.vertical_alignment
+        when 'top'
+            assign alignItems = 'flex-start'
+        when 'bottom'
+            assign alignItems = 'flex-end'
+        else
+            assign alignItems = 'center'
+    endcase
+%}
+
+{% style %}
+#shopify-section-{{ section.id }} .sn-hero {
+    background: {{ settings.background }};
+    padding: {{ settings.padding_vertical }}px {{ settings.padding_horizontal }}px;
+    color: #ffffff;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__inner {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    max-width: {{ settings.max_width }}px;
+    margin: 0 auto;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__heading {
+    margin: 0;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__description {
+    margin-top: 24px;
+    max-width: 560px;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__description .typography p {
+    margin: 0;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__checks {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__cta {
+    margin-top: 32px;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__cta .button-block {
+    justify-content: flex-start;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__legal {
+    margin-top: 20px;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__legal .typography {
+    color: #e8f7e8;
+    opacity: 0.8;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__legal .typography a {
+    color: inherit;
+    text-decoration: underline;
+    text-underline-offset: 2px;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__media .image-block__media {
+    box-shadow: 0 30px 70px rgba(0, 0, 0, 0.32);
+}
+
+#shopify-section-{{ section.id }} .sn-hero__highlight {
+    margin-top: 28px;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__highlight .typography {
+    color: #ffffff;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__highlight .typography strong {
+    font-size: 1.8em;
+}
+
+#shopify-section-{{ section.id }} .sn-hero__rating {
+    margin-top: 20px;
+}
+
+@media screen and (min-width: 750px) {
+    #shopify-section-{{ section.id }} .sn-hero__inner {
+        flex-direction: row;
+        align-items: {{ alignItems }};
+        gap: {{ settings.column_gap }}px;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__content {
+        flex: 0 0 calc({{ settings.content_width }}% - {{ halfGap }}px);
+        min-width: 0;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__aside {
+        flex: 1 1 0;
+        min-width: 0;
+    }
+
+    {%- if settings.media_position == 'left' %}
+        #shopify-section-{{ section.id }} .sn-hero__content {
+            order: 2;
+        }
+
+        #shopify-section-{{ section.id }} .sn-hero__aside {
+            order: 1;
+        }
+    {%- endif %}
+}
+
+@media screen and (max-width: 749px) {
+    #shopify-section-{{ section.id }} .sn-hero {
+        padding: 40px 20px 44px;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__inner {
+        gap: 0;
+    }
+
+    /* Promote children so they can be interleaved in the mobile order. */
+    #shopify-section-{{ section.id }} .sn-hero__content,
+    #shopify-section-{{ section.id }} .sn-hero__aside {
+        display: contents;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__heading {
+        order: 1;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__description {
+        order: 2;
+        margin-top: 20px;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__media {
+        order: 3;
+        margin-top: 24px;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__checks {
+        order: 4;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__cta {
+        order: 5;
+        margin-top: 32px;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__highlight {
+        order: 6;
+        margin-top: 32px;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__rating {
+        order: 7;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__legal {
+        order: 8;
+        margin-top: 24px;
+    }
+
+    /* Mobile-specific styling from the design. */
+    #shopify-section-{{ section.id }} .sn-hero__cta .button-block__cta {
+        width: 100%;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__highlight .typography {
+        text-align: center;
+        padding: 20px 24px;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__rating .rating-block {
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 8px;
+        text-align: center;
+    }
+
+    #shopify-section-{{ section.id }} .sn-hero__legal .typography {
+        text-align: left;
+    }
+}
+{% endstyle %}
+
+<div class="sn-hero">
+    <div class="sn-hero__inner">
+        <div class="sn-hero__content">
+            <div class="sn-hero__heading">
+                {% content_for 'block', type: 'heading', id: 'hero-heading' %}
+            </div>
+
+            <div class="sn-hero__description">
+                {% content_for 'block', type: 'typography', id: 'hero-description' %}
+            </div>
+
+            {%- if section.blocks.size > 0 -%}
+                <div class="sn-hero__checks">
+                    {% content_for 'blocks' %}
+                </div>
+            {%- endif -%}
+
+            <div class="sn-hero__cta">
+                {% content_for 'block', type: 'button', id: 'hero-cta' %}
+            </div>
+
+            <div class="sn-hero__legal">
+                {% content_for 'block', type: 'typography', id: 'hero-legal' %}
+            </div>
+        </div>
+
+        <div class="sn-hero__aside">
+            <div class="sn-hero__media">
+                {% content_for 'block', type: 'image', id: 'hero-image' %}
+            </div>
+
+            <div class="sn-hero__highlight">
+                {% content_for 'block', type: 'typography', id: 'hero-highlight' %}
+            </div>
+
+            <div class="sn-hero__rating">
+                {% content_for 'block', type: 'rating', id: 'hero-rating' %}
+            </div>
+        </div>
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Hero banner",
+  "tag": "section",
+  "class": "sn-hero-banner",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "linear-gradient(115deg, #0a6b18 0%, #128c24 58%, #1ba02f 100%)"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 800,
+      "max": 1800,
+      "step": 20,
+      "unit": "px",
+      "default": 1400
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 160,
+      "step": 8,
+      "unit": "px",
+      "default": 72
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "range",
+      "id": "content_width",
+      "label": "Text column width",
+      "min": 40,
+      "max": 70,
+      "step": 2,
+      "unit": "%",
+      "default": 52
+    },
+    {
+      "type": "range",
+      "id": "column_gap",
+      "label": "Column gap",
+      "min": 24,
+      "max": 120,
+      "step": 8,
+      "unit": "px",
+      "default": 64
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical alignment",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "center"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media position",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ],
+      "default": "right"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Hero banner",
+      "category": "Custom",
+      "settings": {
+        "background": "linear-gradient(115deg, #0a6b18 0%, #128c24 58%, #1ba02f 100%)",
+        "max_width": 1400,
+        "padding_vertical": 72,
+        "padding_horizontal": 40,
+        "content_width": 52,
+        "column_gap": 64,
+        "vertical_alignment": "center",
+        "media_position": "right"
+      },
+      "blocks": [
+        {
+          "type": "heading",
+          "id": "hero-heading",
+          "static": true,
+          "settings": {
+            "text": "Be first to shop <strong>new arrivals</strong> every week",
+            "size_desktop": 64,
+            "size_mobile": 36,
+            "font_weight": 800,
+            "letter_spacing": -1,
+            "text_color": "#ffffff",
+            "accent_color": "#b7e34a",
+            "text_alignment": "left"
+          }
+        },
+        {
+          "type": "typography",
+          "id": "hero-description",
+          "static": true,
+          "settings": {
+            "content": "<p>Tell customers what makes your store special. Add a short paragraph to introduce your collection or offer.</p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "font_size_desktop": 18,
+            "font_size_mobile": 16,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "left"
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#0c3f13",
+            "media_text_background": "#56c95c",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>Free shipping on all orders</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 16,
+            "text_size_mobile": 15,
+            "text_color": "#ffffff"
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#0c3f13",
+            "media_text_background": "#56c95c",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>Easy 30-day returns</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 16,
+            "text_size_mobile": 15,
+            "text_color": "#ffffff"
+          }
+        },
+        {
+          "type": "media",
+          "settings": {
+            "show_media": true,
+            "media_type": "text",
+            "media_text": "✓",
+            "media_text_size": 14,
+            "media_text_color": "#0c3f13",
+            "media_text_background": "#56c95c",
+            "media_text_radius": 50,
+            "media_text_padding": 4,
+            "show_text": true,
+            "heading": "",
+            "text": "<p>New drops every week</p>",
+            "text_alignment": "left",
+            "show_button": false,
+            "layout": "horizontal",
+            "media_position": "left",
+            "vertical_alignment": "center",
+            "stack_on_mobile": false,
+            "gap": 12,
+            "background": "transparent",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0,
+            "media_aspect_ratio": "adapt",
+            "media_border_radius": 0,
+            "text_size_desktop": 16,
+            "text_size_mobile": 15,
+            "text_color": "#ffffff"
+          }
+        },
+        {
+          "type": "button",
+          "id": "hero-cta",
+          "static": true,
+          "settings": {
+            "label": "Shop new arrivals",
+            "action": "link",
+            "alignment": "left",
+            "full_width": false,
+            "padding_vertical": 18,
+            "padding_horizontal": 36,
+            "font_size_desktop": 15,
+            "font_size_mobile": 14,
+            "font_weight": 800,
+            "letter_spacing": 0,
+            "text_transform": "uppercase",
+            "background": "#ff9d00",
+            "text_color": "#1a1a1a",
+            "hover_background": "#ffb02e",
+            "hover_text_color": "#1a1a1a",
+            "hover_animation": "color",
+            "animation_duration": 200,
+            "border_width": 0,
+            "border_color": "#ff9d00",
+            "border_style": "solid",
+            "border_radius": 100
+          }
+        },
+        {
+          "type": "typography",
+          "id": "hero-legal",
+          "static": true,
+          "settings": {
+            "content": "<p>Prices include tax. Shipping and discounts are calculated at checkout. <a href=\"#\">Read our policies</a></p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "font_size_desktop": 13,
+            "font_size_mobile": 12,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "left",
+            "border_width": 0,
+            "border_color": "#e5e5e5",
+            "border_style": "solid",
+            "border_radius": 0,
+            "padding_vertical": 0,
+            "padding_horizontal": 0
+          }
+        },
+        {
+          "type": "image",
+          "id": "hero-image",
+          "static": true,
+          "settings": {
+            "aspect_ratio": "adapt",
+            "object_fit": "cover",
+            "max_width": 0,
+            "alignment": "left",
+            "border_radius": 16,
+            "open_in_new_tab": false,
+            "eager_load": false
+          }
+        },
+        {
+          "type": "typography",
+          "id": "hero-highlight",
+          "static": true,
+          "settings": {
+            "content": "<p>Save <strong>20%</strong> on your first order.</p>",
+            "enable_text_gradient": false,
+            "gradient_color": "transparent",
+            "font_size_desktop": 18,
+            "font_size_mobile": 16,
+            "font_weight": 400,
+            "font_style_italic": false,
+            "letter_spacing": 0,
+            "text_align": "left",
+            "border_width": 1,
+            "border_color": "#7fbf7f",
+            "border_style": "solid",
+            "border_radius": 12,
+            "padding_vertical": 16,
+            "padding_horizontal": 24,
+            "enable_highlight_gradient": true,
+            "highlight_gradient": "linear-gradient(90deg, rgba(183, 227, 74, 1) 0%, rgba(168, 224, 95, 1) 55%, rgba(200, 241, 105, 1) 100%)"
+          }
+        },
+        {
+          "type": "rating",
+          "id": "hero-rating",
+          "static": true,
+          "settings": {
+            "stars": 5,
+            "star_color": "#ffcf3f",
+            "star_size": 16,
+            "text": "Trusted by 1,000+ happy customers",
+            "text_size": 15,
+            "text_color": "#ffffff",
+            "gap": 10,
+            "text_alignment": "left"
+          }
+        }
+      ]
+    }
+  ],
+  "blocks": [
+    {
+      "type": "media"
+    }
+  ],
+  "max_blocks": 6
+}
+{% endschema %}
