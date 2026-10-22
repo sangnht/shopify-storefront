@@ -1,0 +1,824 @@
+{% liquid
+    assign blockId = block.id
+    assign settings = block.settings
+
+    # Visibility
+    assign showMedia = settings.show_media
+    assign showText = settings.show_text
+    assign showButton = settings.show_button
+    assign showContent = showText
+    if showButton
+        assign showContent = true
+    endif
+
+    # Layout
+    assign layout = settings.layout | default: 'horizontal'
+    assign mediaPosition = settings.media_position | default: 'left'
+    assign mediaWidth = settings.media_width | default: 50
+    assign gap = settings.gap | default: 32
+    assign halfGap = gap | divided_by: 2.0
+    assign stackOnMobile = settings.stack_on_mobile
+    assign verticalAlignment = settings.vertical_alignment | default: 'top'
+
+    case verticalAlignment
+        when 'center'
+            assign alignItems = 'center'
+        when 'bottom'
+            assign alignItems = 'flex-end'
+        else
+            assign alignItems = 'flex-start'
+    endcase
+
+    # Media
+    assign mediaType = settings.media_type | default: 'image'
+    assign image = settings.image
+    assign video = settings.video
+    assign videoUrl = settings.video_url
+    assign mediaRadius = settings.media_border_radius | default: 0
+    assign aspectRatio = settings.media_aspect_ratio | default: '4/3'
+
+    # Block appearance
+    assign backgroundColor = settings.background | default: 'transparent'
+    assign backgroundImage = settings.background_image
+    assign blockRadius = settings.border_radius | default: 0
+    assign blockPaddingVertical = settings.padding_vertical | default: 0
+    assign blockPaddingHorizontal = settings.padding_horizontal | default: 0
+
+    # Video playback
+    assign autoplay = settings.autoplay
+    assign muted = settings.muted
+    assign loop = settings.loop
+    assign controls = settings.controls
+
+    if autoplay
+        assign muted = true
+    endif
+
+    # Keep a usable ratio when "Adapt" is selected.
+    if aspectRatio == 'adapt'
+        if mediaType == 'video'
+            assign ratio = 1.7778
+        elsif image != blank
+            assign ratio = image.aspect_ratio
+        else
+            assign ratio = 1.3333
+        endif
+    else
+        assign ratio = aspectRatio
+    endif
+
+    # Content
+    assign textAlignment = settings.text_alignment | default: 'left'
+    assign headingSizeDesktop = settings.heading_size_desktop | default: 32
+    assign headingSizeMobile = settings.heading_size_mobile | default: 24
+    assign headingColor = settings.heading_color | default: '#1a1a1a'
+    assign textSizeDesktop = settings.text_size_desktop | default: 16
+    assign textSizeMobile = settings.text_size_mobile | default: 15
+    assign textColor = settings.text_color | default: '#4a4a4a'
+
+    # Button
+    assign buttonLabel = settings.button_label | default: 'Learn more'
+    assign buttonLink = settings.button_link
+    assign buttonBackground = settings.button_background | default: '#1a1a1a'
+    assign buttonTextColor = settings.button_text_color | default: '#ffffff'
+    assign buttonRadius = settings.button_border_radius | default: 0
+
+    # External video
+    assign videoId = videoUrl.id
+    assign loopParam = ''
+    if loop and videoUrl != blank
+        if videoUrl.type == 'youtube'
+            assign loopParam = '&loop=1&playlist=' | append: videoId
+        else
+            assign loopParam = '&loop=1'
+        endif
+    endif
+
+    assign autoplayValue = '0'
+    assign mutedValue = '0'
+    assign controlsValue = '1'
+    if autoplay
+        assign autoplayValue = '1'
+    endif
+    if muted
+        assign mutedValue = '1'
+    endif
+    unless controls
+        assign controlsValue = '0'
+    endunless
+
+    assign videoTitle = settings.heading | strip_html | default: 'Video'
+
+    # Responsive image sizes
+    if layout == 'horizontal' and showContent and stackOnMobile
+        assign imageSizes = '(min-width: 750px) ' | append: mediaWidth | append: 'vw, 100vw'
+    else
+        assign imageSizes = '(min-width: 750px) calc(100vw - 10rem), 100vw'
+    endif
+%}
+
+{% style %}
+#{{ blockId }}.media-block {
+    display: flex;
+    flex-direction: column;
+    gap: {{ gap }}px;
+    padding: {{ blockPaddingVertical }}px {{ blockPaddingHorizontal }}px;
+    border-radius: {{ blockRadius }}px;
+    background: {{ backgroundColor }};
+    {%- if backgroundImage != blank %}
+        background-image: url("{{ backgroundImage | image_url: width: 2000 }}");
+        background-size: cover;
+        background-position: center;
+        background-repeat: no-repeat;
+    {%- endif %}
+}
+
+#{{ blockId }} .media-block__media {
+    position: relative;
+    width: 100%;
+    overflow: hidden;
+    border-radius: {{ mediaRadius }}px;
+    aspect-ratio: {{ ratio }};
+    background-color: #f4f4f4;
+}
+
+#{{ blockId }} .media-block__media img,
+#{{ blockId }} .media-block__media video,
+#{{ blockId }} .media-block__media iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+}
+
+#{{ blockId }} .media-block__media .placeholder-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+#{{ blockId }} .media-block__content {
+    min-width: 0;
+    text-align: {{ textAlignment }};
+}
+
+#{{ blockId }} .media-block__heading {
+    margin: 0 0 1.2rem;
+    font-size: {{ headingSizeDesktop }}px;
+    line-height: 1.2;
+    color: {{ headingColor }};
+}
+
+#{{ blockId }} .media-block__text {
+    font-size: {{ textSizeDesktop }}px;
+    line-height: 1.6;
+    color: {{ textColor }};
+    word-break: break-word;
+}
+
+#{{ blockId }} .media-block__text > :first-child {
+    margin-top: 0;
+}
+
+#{{ blockId }} .media-block__text > :last-child {
+    margin-bottom: 0;
+}
+
+#{{ blockId }} .media-block__button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-top: 1.6rem;
+    padding: 1.2rem 2.4rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    text-decoration: none;
+    color: {{ buttonTextColor }};
+    background: {{ buttonBackground }};
+    border-radius: {{ buttonRadius }}px;
+    transition: opacity 0.2s ease;
+}
+
+#{{ blockId }} .media-block__button:not(.media-block__button--disabled):hover {
+    opacity: 0.85;
+}
+
+#{{ blockId }} .media-block__button--disabled {
+    cursor: default;
+}
+
+#{{ blockId }} .media-block__button:focus-visible {
+    outline: 0.2rem solid {{ buttonTextColor }};
+    outline-offset: 0.2rem;
+}
+
+/* Horizontal layout is the default at every width; "Stack on mobile" turns it
+   back into a column below 750px. Keeping the row rules outside the media query
+   is what makes the setting actually change the mobile layout. */
+#{{ blockId }}.media-block--horizontal {
+    flex-direction: row;
+    align-items: {{ alignItems }};
+}
+
+#{{ blockId }}.media-block--horizontal .media-block__media {
+    flex: 0 0 calc({{ mediaWidth }}% - {{ halfGap }}px);
+}
+
+#{{ blockId }}.media-block--horizontal .media-block__content {
+    flex: 1 1 0;
+}
+
+#{{ blockId }}.media-block--horizontal.media-block--media-only .media-block__media {
+    flex: 1 1 100%;
+}
+
+#{{ blockId }}.media-block--horizontal.media-block--media-right .media-block__media {
+    order: 2;
+}
+
+#{{ blockId }}.media-block--horizontal.media-block--media-right .media-block__content {
+    order: 1;
+}
+
+@media screen and (max-width: 749px) {
+    #{{ blockId }} .media-block__heading {
+        font-size: {{ headingSizeMobile }}px;
+    }
+
+    #{{ blockId }} .media-block__text {
+        font-size: {{ textSizeMobile }}px;
+    }
+
+    #{{ blockId }}.media-block--horizontal.media-block--stack-mobile {
+        flex-direction: column;
+    }
+
+    #{{ blockId }}.media-block--horizontal.media-block--stack-mobile .media-block__media,
+    #{{ blockId }}.media-block--horizontal.media-block--stack-mobile .media-block__content {
+        order: 0;
+    }
+
+    #{{ blockId }}.media-block--horizontal.media-block--stack-mobile .media-block__media {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+}
+{% endstyle %}
+
+<div
+    id="{{ blockId }}"
+    class="media-block media-block--{{ layout }}{% if layout == 'horizontal' and mediaPosition == 'right' %} media-block--media-right{% endif %}{% if layout == 'horizontal' and stackOnMobile %} media-block--stack-mobile{% endif %}{% if showMedia and showContent == false %} media-block--media-only{% endif %}"
+    {{ block.shopify_attributes }}
+>
+    {%- if showMedia -%}
+        <div class="media-block__media">
+            {%- if mediaType == 'video' -%}
+                {%- if video != blank -%}
+                    {{
+                        video
+                        | video_tag:
+                            image_size: '1100x',
+                            autoplay: autoplay,
+                            loop: loop,
+                            controls: controls,
+                            muted: muted
+                    }}
+                {%- elsif videoUrl != blank -%}
+                    {%- if videoUrl.type == 'youtube' -%}
+                        <iframe
+                            src="https://www.youtube.com/embed/{{ videoId }}?autoplay={{ autoplayValue }}&mute={{ mutedValue }}&controls={{ controlsValue }}&playsinline=1&rel=0{{ loopParam }}"
+                            title="{{ videoTitle | escape }}"
+                            allow="autoplay; encrypted-media; picture-in-picture"
+                            allowfullscreen
+                            {% unless autoplay %}loading="lazy"{% endunless %}
+                        ></iframe>
+                    {%- else -%}
+                        <iframe
+                            src="https://player.vimeo.com/video/{{ videoId }}?autoplay={{ autoplayValue }}&muted={{ mutedValue }}&controls={{ controlsValue }}&playsinline=1&dnt=1{{ loopParam }}"
+                            title="{{ videoTitle | escape }}"
+                            allow="autoplay; encrypted-media; picture-in-picture"
+                            allowfullscreen
+                            {% unless autoplay %}loading="lazy"{% endunless %}
+                        ></iframe>
+                    {%- endif -%}
+                {%- else -%}
+                    {{ 'hero-apparel-3' | placeholder_svg_tag: 'placeholder-svg media-block__placeholder' }}
+                {%- endif -%}
+            {%- elsif image != blank -%}
+                {{
+                    image
+                    | image_url: width: 2400
+                    | image_tag:
+                        widths: '375, 550, 750, 1100, 1500, 1780, 2000, 2400',
+                        sizes: imageSizes,
+                        alt: image.alt,
+                        loading: 'lazy'
+                }}
+            {%- else -%}
+                {{ 'detailed-apparel-1' | placeholder_svg_tag: 'placeholder-svg media-block__placeholder' }}
+            {%- endif -%}
+        </div>
+    {%- endif -%}
+
+    {%- if showContent -%}
+        <div class="media-block__content">
+            {%- if showText -%}
+                {%- unless settings.heading == blank -%}
+                    <h2 class="media-block__heading">{{ settings.heading }}</h2>
+                {%- endunless -%}
+
+                {%- unless settings.text == blank -%}
+                    <div class="media-block__text rte">{{ settings.text }}</div>
+                {%- endunless -%}
+            {%- endif -%}
+
+            {%- if showButton -%}
+                {%- if buttonLink != blank -%}
+                    <a
+                        class="media-block__button"
+                        href="{{ buttonLink }}"
+                        {%- if settings.button_open_in_new_tab %} target="_blank" rel="noopener noreferrer"{% endif %}
+                    >
+                        {{- buttonLabel -}}
+                    </a>
+                {%- else -%}
+                    <span class="media-block__button media-block__button--disabled">{{ buttonLabel }}</span>
+                {%- endif -%}
+            {%- endif -%}
+        </div>
+    {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Media",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_text",
+      "label": "Show text",
+      "default": true
+    },
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Content and media"
+    },
+    {
+      "type": "richtext",
+      "id": "text",
+      "label": "Text",
+      "default": "<p>Pair this text with an image or a video to tell your story.</p>"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Text alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "Learn more",
+      "visible_if": "{{ block.settings.show_button }}"
+    },
+    {
+      "type": "url",
+      "id": "button_link",
+      "label": "Button link",
+      "info": "Without a link the button still previews in the editor, but it isn't clickable.",
+      "visible_if": "{{ block.settings.show_button }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "button_open_in_new_tab",
+      "label": "Open in a new tab",
+      "default": false,
+      "visible_if": "{{ block.settings.show_button }}"
+    },
+    {
+      "type": "color_background",
+      "id": "button_background",
+      "label": "Button background",
+      "default": "#1a1a1a",
+      "visible_if": "{{ block.settings.show_button }}"
+    },
+    {
+      "type": "color",
+      "id": "button_text_color",
+      "label": "Button text color",
+      "default": "#ffffff",
+      "visible_if": "{{ block.settings.show_button }}"
+    },
+    {
+      "type": "range",
+      "id": "button_border_radius",
+      "label": "Button border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.show_button }}"
+    },
+    {
+      "type": "header",
+      "content": "Media"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_media",
+      "label": "Show media",
+      "default": true
+    },
+    {
+      "type": "select",
+      "id": "media_type",
+      "label": "Media type",
+      "options": [
+        {
+          "value": "image",
+          "label": "Image"
+        },
+        {
+          "value": "video",
+          "label": "Video"
+        }
+      ],
+      "default": "image",
+      "visible_if": "{{ block.settings.show_media }}"
+    },
+    {
+      "type": "image_picker",
+      "id": "image",
+      "label": "Image",
+      "visible_if": "{{ block.settings.show_media and block.settings.media_type == 'image' }}"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Shopify hosted video",
+      "visible_if": "{{ block.settings.show_media and block.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "YouTube or Vimeo URL",
+      "accept": ["youtube", "vimeo"],
+      "info": "Used when no Shopify hosted video is selected.",
+      "visible_if": "{{ block.settings.show_media and block.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Video playback",
+      "visible_if": "{{ block.settings.show_media and block.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "info": "Browsers only autoplay muted videos, so autoplay always mutes the video.",
+      "default": false,
+      "visible_if": "{{ block.settings.show_media and block.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "muted",
+      "label": "Mute",
+      "default": true,
+      "visible_if": "{{ block.settings.show_media and block.settings.media_type == 'video' and block.settings.autoplay == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop",
+      "default": false,
+      "visible_if": "{{ block.settings.show_media and block.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "controls",
+      "label": "Show controls",
+      "info": "Keep enabled unless this is a background video that autoplays.",
+      "default": true,
+      "visible_if": "{{ block.settings.show_media and block.settings.media_type == 'video' }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "layout",
+      "label": "Layout",
+      "options": [
+        {
+          "value": "horizontal",
+          "label": "Horizontal"
+        },
+        {
+          "value": "vertical",
+          "label": "Vertical"
+        }
+      ],
+      "default": "horizontal"
+    },
+    {
+      "type": "select",
+      "id": "media_position",
+      "label": "Media position",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left",
+      "visible_if": "{{ block.settings.layout == 'horizontal' }}"
+    },
+    {
+      "type": "range",
+      "id": "media_width",
+      "label": "Media width",
+      "min": 20,
+      "max": 80,
+      "step": 5,
+      "unit": "%",
+      "default": 50,
+      "visible_if": "{{ block.settings.layout == 'horizontal' }}"
+    },
+    {
+      "type": "select",
+      "id": "vertical_alignment",
+      "label": "Vertical alignment",
+      "options": [
+        {
+          "value": "top",
+          "label": "Top"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "bottom",
+          "label": "Bottom"
+        }
+      ],
+      "default": "top",
+      "visible_if": "{{ block.settings.layout == 'horizontal' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "stack_on_mobile",
+      "label": "Stack on mobile",
+      "default": true,
+      "visible_if": "{{ block.settings.layout == 'horizontal' }}"
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Space between media and text",
+      "min": 0,
+      "max": 80,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "header",
+      "content": "Background"
+    },
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "transparent"
+    },
+    {
+      "type": "image_picker",
+      "id": "background_image",
+      "label": "Background image",
+      "info": "Overrides the background color or gradient."
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "header",
+      "content": "Media style"
+    },
+    {
+      "type": "select",
+      "id": "media_aspect_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        {
+          "value": "adapt",
+          "label": "Adapt to media"
+        },
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "16/9",
+          "label": "Wide (16:9)"
+        },
+        {
+          "value": "21/9",
+          "label": "Ultra wide (21:9)"
+        }
+      ],
+      "default": "4/3",
+      "visible_if": "{{ block.settings.show_media }}"
+    },
+    {
+      "type": "range",
+      "id": "media_border_radius",
+      "label": "Media border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0,
+      "visible_if": "{{ block.settings.show_media }}"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_desktop",
+      "label": "Heading size (desktop)",
+      "min": 16,
+      "max": 64,
+      "step": 2,
+      "unit": "px",
+      "default": 32,
+      "visible_if": "{{ block.settings.show_text }}"
+    },
+    {
+      "type": "range",
+      "id": "heading_size_mobile",
+      "label": "Heading size (mobile)",
+      "min": 14,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 24,
+      "visible_if": "{{ block.settings.show_text }}"
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1a1a1a",
+      "visible_if": "{{ block.settings.show_text }}"
+    },
+    {
+      "type": "range",
+      "id": "text_size_desktop",
+      "label": "Text size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 16,
+      "visible_if": "{{ block.settings.show_text }}"
+    },
+    {
+      "type": "range",
+      "id": "text_size_mobile",
+      "label": "Text size (mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 15,
+      "visible_if": "{{ block.settings.show_text }}"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#4a4a4a",
+      "visible_if": "{{ block.settings.show_text }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Media",
+      "category": "Custom",
+      "settings": {
+        "show_text": true,
+        "heading": "Media block",
+        "text": "<p>Pair this text with an image or a video to tell your story.</p>",
+        "text_alignment": "left",
+        "show_button": false,
+        "button_label": "Learn more",
+        "button_open_in_new_tab": false,
+        "button_background": "#1a1a1a",
+        "button_text_color": "#ffffff",
+        "button_border_radius": 0,
+        "show_media": true,
+        "media_type": "image",
+        "autoplay": false,
+        "muted": true,
+        "loop": false,
+        "controls": true,
+        "layout": "horizontal",
+        "media_position": "left",
+        "media_width": 50,
+        "vertical_alignment": "center",
+        "stack_on_mobile": true,
+        "gap": 32,
+        "background": "transparent",
+        "border_radius": 0,
+        "padding_vertical": 0,
+        "padding_horizontal": 0,
+        "media_aspect_ratio": "4/3",
+        "media_border_radius": 0,
+        "heading_size_desktop": 32,
+        "heading_size_mobile": 24,
+        "heading_color": "#1a1a1a",
+        "text_size_desktop": 16,
+        "text_size_mobile": 15,
+        "text_color": "#4a4a4a"
+      }
+    }
+  ]
+}
+{% endschema %}
