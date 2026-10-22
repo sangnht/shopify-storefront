@@ -78,25 +78,25 @@
   "name": "Setion Test",
   "settings": [
     {
-        "type": "header",
-        "content": "Settings"
+      "type": "header",
+      "content": "Layout"
     },
     {
-        "type": "checkbox",
-        "id": "full_width",
-        "label": "Full width",
-        "default": false
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
     },
     {
-        "type": "range",
-        "id": "max_width",
-        "label": "Max width",
-        "min": 100,
-        "max": 2000,
-        "step": 20,
-        "unit": "px",
-        "default": 1200,
-        "visible_if": "{{ section.settings.full_width == false }}"
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 100,
+      "max": 2000,
+      "step": 20,
+      "unit": "px",
+      "default": 1200,
+      "visible_if": "{{ section.settings.full_width == false }}"
     },
     {
       "type": "range",
@@ -109,8 +109,8 @@
       "default": 0
     },
     {
-        "type": "header",
-        "content": "Background"
+      "type": "header",
+      "content": "Background"
     },
     {
       "type": "checkbox",
@@ -178,9 +178,8 @@
     {
       "type": "header",
       "content": "Padding Container",
-      "visible_if": "{{ section.settings.enable_container_padding == true }}"
+      "visible_if": "{{ section.settings.enable_container_padding }}"
     },
-
     {
       "type": "range",
       "id": "container_padding_vertical",

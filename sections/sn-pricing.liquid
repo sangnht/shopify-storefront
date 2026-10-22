@@ -77,10 +77,24 @@
   "max_blocks": 12,
   "settings": [
     {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
       "type": "color_background",
       "id": "background",
       "label": "Background",
       "default": "linear-gradient(135deg, #201026 0%, #33203f 100%)"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "min": 600,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 1100
     },
     {
       "type": "range",
@@ -101,16 +115,6 @@
       "step": 8,
       "unit": "px",
       "default": 24
-    },
-    {
-      "type": "range",
-      "id": "max_width",
-      "label": "Max width",
-      "min": 600,
-      "max": 1600,
-      "step": 20,
-      "unit": "px",
-      "default": 1100
     }
   ],
   "blocks": [

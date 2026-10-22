@@ -498,19 +498,6 @@
       "default": false
     },
     {
-      "type": "checkbox",
-      "id": "show_button",
-      "label": "Show button",
-      "default": false
-    },
-    {
-      "type": "text",
-      "id": "button_label",
-      "label": "Button label",
-      "default": "View product",
-      "visible_if": "{{ block.settings.show_button }}"
-    },
-    {
       "type": "header",
       "content": "Pricing",
       "visible_if": "{{ block.settings.show_price }}"
@@ -859,6 +846,19 @@
     {
       "type": "header",
       "content": "Button"
+    },
+    {
+      "type": "checkbox",
+      "id": "show_button",
+      "label": "Show button",
+      "default": false
+    },
+    {
+      "type": "text",
+      "id": "button_label",
+      "label": "Button label",
+      "default": "View product",
+      "visible_if": "{{ block.settings.show_button }}"
     },
     {
       "type": "range",

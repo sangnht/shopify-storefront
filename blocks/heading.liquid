@@ -48,10 +48,18 @@
   "name": "Heading",
   "settings": [
     {
+      "type": "header",
+      "content": "Content"
+    },
+    {
       "type": "inline_richtext",
       "id": "text",
       "label": "Heading",
       "default": "Be first to shop <strong>new arrivals</strong> every week"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
     },
     {
       "type": "range",
@@ -93,19 +101,6 @@
       "default": 0
     },
     {
-      "type": "color",
-      "id": "text_color",
-      "label": "Text color",
-      "default": "#1a1a1a"
-    },
-    {
-      "type": "color",
-      "id": "accent_color",
-      "label": "Highlight color",
-      "info": "Applied to text wrapped in bold.",
-      "default": "#1a1a1a"
-    },
-    {
       "type": "select",
       "id": "text_alignment",
       "label": "Alignment",
@@ -124,6 +119,23 @@
         }
       ],
       "default": "left"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Highlight color",
+      "info": "Applied to text wrapped in bold.",
+      "default": "#1a1a1a"
     }
   ],
   "presets": [
