@@ -1,0 +1,146 @@
+{% liquid
+    assign blockId = block.id
+    assign settings = block.settings
+
+    assign sizeDesktop = settings.size_desktop | default: 48
+    assign sizeMobile = settings.size_mobile | default: 32
+    assign fontWeight = settings.font_weight | default: 700
+    assign letterSpacing = settings.letter_spacing | default: 0
+    assign textColor = settings.text_color | default: '#1a1a1a'
+    assign accentColor = settings.accent_color | default: '#1a1a1a'
+    assign textAlignment = settings.text_alignment | default: 'left'
+%}
+
+{% style %}
+#{{ blockId }}.heading-block {
+    margin: 0;
+    font-size: {{ sizeDesktop }}px;
+    font-weight: {{ fontWeight }};
+    line-height: 1.05;
+    letter-spacing: {{ letterSpacing }}px;
+    color: {{ textColor }};
+    text-align: {{ textAlignment }};
+    word-break: break-word;
+}
+
+#{{ blockId }} .heading-block__text {
+    display: block;
+}
+
+#{{ blockId }} .heading-block__text strong {
+    color: {{ accentColor }};
+    font-weight: inherit;
+}
+
+@media screen and (max-width: 749px) {
+    #{{ blockId }}.heading-block {
+        font-size: {{ sizeMobile }}px;
+    }
+}
+{% endstyle %}
+
+<h2 id="{{ blockId }}" class="heading-block" {{ block.shopify_attributes }}>
+    <span class="heading-block__text">{{ settings.text }}</span>
+</h2>
+
+{% schema %}
+{
+  "name": "Heading",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "text",
+      "label": "Heading",
+      "default": "Be first to shop <strong>new arrivals</strong> every week"
+    },
+    {
+      "type": "range",
+      "id": "size_desktop",
+      "label": "Size (desktop)",
+      "min": 24,
+      "max": 96,
+      "step": 2,
+      "unit": "px",
+      "default": 48
+    },
+    {
+      "type": "range",
+      "id": "size_mobile",
+      "label": "Size (mobile)",
+      "min": 20,
+      "max": 56,
+      "step": 2,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "range",
+      "id": "font_weight",
+      "label": "Weight",
+      "min": 100,
+      "max": 900,
+      "step": 100,
+      "default": 700
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": -6,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "accent_color",
+      "label": "Highlight color",
+      "info": "Applied to text wrapped in bold.",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "select",
+      "id": "text_alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Heading",
+      "category": "Custom",
+      "settings": {
+        "text": "Be first to shop <strong>new arrivals</strong> every week",
+        "size_desktop": 48,
+        "size_mobile": 32,
+        "font_weight": 700,
+        "letter_spacing": 0,
+        "text_color": "#1a1a1a",
+        "accent_color": "#1a1a1a",
+        "text_alignment": "left"
+      }
+    }
+  ]
+}
+{% endschema %}
