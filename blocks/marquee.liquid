@@ -1,0 +1,421 @@
+{% liquid
+    assign blockId = block.id
+    assign settings = block.settings
+
+    # Content
+    assign marqueeText = settings.content | default: 'This is a Marquee Block'
+    assign separator = settings.separator
+    assign repeat = settings.repeat | default: 3
+
+    # Typography
+    assign fontSizeDesktop = settings.font_size_desktop | default: 24
+    assign fontSizeMobile = settings.font_size_mobile | default: 18
+    assign fontWeight = settings.font_weight | default: 500
+    assign letterSpacing = settings.letter_spacing | default: 0
+    assign textTransform = settings.text_transform | default: 'uppercase'
+    if settings.font_style_italic
+        assign fontStyleItalic = 'italic'
+    else
+        assign fontStyleItalic = 'normal'
+    endif
+
+    # Text color
+    assign textColor = settings.text_color | default: '#ffffff'
+    assign enableTextGradient = settings.enable_text_gradient | default: false
+    assign gradientColor = settings.gradient_color | default: 'linear-gradient(90deg, rgba(250, 220, 54, 1) 0%, rgba(254, 98, 146, 1) 50%, rgba(250, 220, 54, 1) 100%)'
+
+    # Layout
+    assign direction = settings.direction | default: 'left'
+    assign speed = settings.speed | default: 8
+    assign duration = speed | times: repeat
+    assign gap = settings.gap | default: 32
+    assign halfGap = gap | divided_by: 2.0
+    assign pauseOnHover = settings.pause_on_hover
+    assign fadeEdges = settings.fade_edges
+    assign animationName = 'marquee-scroll-' | append: blockId | handleize
+
+    # Appearance
+    assign backgroundColor = settings.background | default: '#111111'
+    assign paddingVertical = settings.padding_vertical | default: 12
+    assign borderWidth = settings.border_width | default: 0
+    assign borderColor = settings.border_color | default: '#ffffff'
+%}
+
+{% style %}
+#{{ blockId }}.marquee {
+    --marquee-gap: {{ gap }}px;
+    --marquee-half-gap: {{ halfGap }}px;
+    --marquee-duration: {{ duration }}s;
+    background: {{ backgroundColor }};
+    padding-block: {{ paddingVertical }}px;
+    border-top: {{ borderWidth }}px solid {{ borderColor }};
+    border-bottom: {{ borderWidth }}px solid {{ borderColor }};
+    overflow: hidden;
+    {% if fadeEdges %}
+        -webkit-mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+        mask-image: linear-gradient(90deg, transparent 0%, #000 10%, #000 90%, transparent 100%);
+    {% endif %}
+}
+
+#{{ blockId }} .marquee__track {
+    display: flex;
+    width: max-content;
+    gap: var(--marquee-gap);
+    animation: {{ animationName }} var(--marquee-duration) linear infinite;
+    {% if direction == 'right' %}
+        animation-direction: reverse;
+    {% endif %}
+}
+
+{% if pauseOnHover %}
+#{{ blockId }} .marquee__track:hover {
+    animation-play-state: paused;
+}
+{% endif %}
+
+#{{ blockId }} .marquee__group {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    gap: var(--marquee-gap);
+}
+
+#{{ blockId }} .marquee__item {
+    font-size: {{ fontSizeDesktop }}px;
+    font-weight: {{ fontWeight }};
+    font-style: {{ fontStyleItalic }};
+    letter-spacing: {{ letterSpacing }}px;
+    text-transform: {{ textTransform }};
+    line-height: 1;
+    white-space: nowrap;
+    {% if enableTextGradient %}
+        background: {{ gradientColor }};
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        color: transparent;
+    {% else %}
+        color: {{ textColor }};
+    {% endif %}
+}
+
+#{{ blockId }} .marquee__item--separator {
+    opacity: 0.6;
+}
+
+@keyframes {{ animationName }} {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(calc(-50% - var(--marquee-half-gap)));
+    }
+}
+
+@media screen and (max-width: 749px) {
+    #{{ blockId }} .marquee__item {
+        font-size: {{ fontSizeMobile }}px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #{{ blockId }} .marquee__track {
+        animation: none;
+    }
+}
+{% endstyle %}
+
+<div id="{{ blockId }}" class="marquee" {{ block.shopify_attributes }}>
+    <div class="marquee__track">
+        {% render 'marquee-group', text: marqueeText, separator: separator, repeat: repeat %}
+        {% render 'marquee-group', text: marqueeText, separator: separator, repeat: repeat, hidden: true %}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Marquee",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "textarea",
+      "id": "content",
+      "label": "Text",
+      "default": "This is a Marquee Block"
+    },
+    {
+      "type": "select",
+      "id": "separator",
+      "label": "Separator",
+      "options": [
+        {
+          "value": "•",
+          "label": "Bullet (•)"
+        },
+        {
+          "value": "·",
+          "label": "Middle dot (·)"
+        },
+        {
+          "value": "—",
+          "label": "Dash (—)"
+        },
+        {
+          "value": "|",
+          "label": "Pipe (|)"
+        },
+        {
+          "value": "/",
+          "label": "Slash (/)"
+        },
+        {
+          "value": "★",
+          "label": "Star (★)"
+        },
+        {
+          "value": "✦",
+          "label": "Sparkle (✦)"
+        },
+        {
+          "value": "→",
+          "label": "Arrow (→)"
+        },
+        {
+          "value": "",
+          "label": "None"
+        }
+      ],
+      "default": "•"
+    },
+    {
+      "type": "range",
+      "id": "repeat",
+      "label": "Repeat text",
+      "min": 1,
+      "max": 10,
+      "step": 1,
+      "default": 3,
+      "info": "Repeat the text enough times to fill the full width of the screen. Doesn't change the scroll speed."
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Font size (desktop)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 24
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Font size (mobile)",
+      "min": 10,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 18
+    },
+    {
+      "type": "range",
+      "id": "font_weight",
+      "label": "Font weight",
+      "min": 100,
+      "max": 900,
+      "step": 100,
+      "default": 500
+    },
+    {
+      "type": "checkbox",
+      "id": "font_style_italic",
+      "label": "Italic",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": -5,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "uppercase"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff",
+      "visible_if": "{{ block.settings.enable_text_gradient == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "enable_text_gradient",
+      "label": "Enable text gradient",
+      "default": false
+    },
+    {
+      "type": "color_background",
+      "id": "gradient_color",
+      "label": "Text gradient",
+      "default": "linear-gradient(90deg, rgba(250, 220, 54, 1) 0%, rgba(254, 98, 146, 1) 50%, rgba(250, 220, 54, 1) 100%)",
+      "visible_if": "{{ block.settings.enable_text_gradient == true }}"
+    },
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "#111111"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "direction",
+      "label": "Direction",
+      "options": [
+        {
+          "value": "left",
+          "label": "Right to left"
+        },
+        {
+          "value": "right",
+          "label": "Left to right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "speed",
+      "label": "Speed",
+      "info": "Seconds for one item to scroll past. Lower is faster. Total loop = speed × repeat.",
+      "min": 1,
+      "max": 20,
+      "step": 1,
+      "unit": "s",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "gap",
+      "label": "Gap between items",
+      "min": 0,
+      "max": 120,
+      "step": 4,
+      "unit": "px",
+      "default": 32
+    },
+    {
+      "type": "checkbox",
+      "id": "pause_on_hover",
+      "label": "Pause on hover",
+      "default": true
+    },
+    {
+      "type": "checkbox",
+      "id": "fade_edges",
+      "label": "Fade edges",
+      "default": false
+    },
+    {
+      "type": "header",
+      "content": "Spacing and border"
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 0,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 12
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#ffffff",
+      "visible_if": "{{ block.settings.border_width > 0 }}"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Marquee",
+      "category": "Custom",
+      "settings": {
+        "content": "This is a Marquee Block",
+        "separator": "•",
+        "repeat": 3,
+        "font_size_desktop": 24,
+        "font_size_mobile": 18,
+        "font_weight": 500,
+        "font_style_italic": false,
+        "letter_spacing": 0,
+        "text_transform": "uppercase",
+        "text_color": "#ffffff",
+        "enable_text_gradient": false,
+        "gradient_color": "linear-gradient(90deg, rgba(250, 220, 54, 1) 0%, rgba(254, 98, 146, 1) 50%, rgba(250, 220, 54, 1) 100%)",
+        "background": "#111111",
+        "direction": "left",
+        "speed": 8,
+        "gap": 32,
+        "pause_on_hover": true,
+        "fade_edges": false,
+        "padding_vertical": 12,
+        "border_width": 0,
+        "border_color": "#ffffff"
+      }
+    }
+  ]
+}
+{% endschema %}
