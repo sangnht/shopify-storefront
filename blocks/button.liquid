@@ -26,6 +26,10 @@
     assign hoverBackgroundColor = settings.hover_background | default: '#333333'
     assign hoverTextColor = settings.hover_text_color | default: '#ffffff'
 
+    # Hover animation
+    assign hoverAnimation = settings.hover_animation | default: 'color'
+    assign animationDuration = settings.animation_duration | default: 200
+
     # Border and spacing
     assign borderWidth = settings.border_width | default: 0
     assign borderColor = settings.border_color | default: '#1a1a1a'
@@ -70,6 +74,8 @@
 
 {% style %}
 #{{ blockId }}.button-block {
+    --button-duration: {{ animationDuration }}ms;
+    --button-ease: cubic-bezier(0.33, 1, 0.68, 1);
     display: flex;
     justify-content: {{ justifyContent }};
 }
@@ -94,7 +100,15 @@
     border: {{ borderWidth }}px solid {{ borderColor }};
     border-radius: {{ borderRadius }}px;
     cursor: pointer;
-    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    {%- if hoverAnimation == 'none' %}
+        transition: none;
+    {%- else %}
+        transition: color var(--button-duration) var(--button-ease),
+            background-color var(--button-duration) var(--button-ease),
+            border-color var(--button-duration) var(--button-ease),
+            transform var(--button-duration) var(--button-ease),
+            box-shadow var(--button-duration) var(--button-ease);
+    {%- endif %}
     {% if fullWidth %}
         width: 100%;
     {% endif %}
@@ -103,6 +117,12 @@
 #{{ blockId }} .button-block__cta:not(.button-block__cta--disabled):hover {
     color: {{ hoverTextColor }};
     background: {{ hoverBackgroundColor }};
+    {%- if hoverAnimation == 'lift' %}
+        transform: translateY(-2px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.16);
+    {%- elsif hoverAnimation == 'scale' %}
+        transform: scale(1.03);
+    {%- endif %}
 }
 
 #{{ blockId }} .button-block__cta:focus-visible {
@@ -112,6 +132,17 @@
 
 #{{ blockId }} .button-block__cta--disabled {
     cursor: default;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #{{ blockId }} .button-block__cta {
+        transition: none;
+    }
+
+    #{{ blockId }} .button-block__cta:not(.button-block__cta--disabled):hover {
+        transform: none;
+        box-shadow: none;
+    }
 }
 
 @media screen and (max-width: 749px) {
@@ -377,6 +408,44 @@ html {
     },
     {
       "type": "header",
+      "content": "Hover animation"
+    },
+    {
+      "type": "select",
+      "id": "hover_animation",
+      "label": "Hover animation",
+      "options": [
+        {
+          "value": "color",
+          "label": "Color fade"
+        },
+        {
+          "value": "lift",
+          "label": "Lift"
+        },
+        {
+          "value": "scale",
+          "label": "Scale"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "color"
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "Animation speed",
+      "min": 100,
+      "max": 600,
+      "step": 50,
+      "unit": "ms",
+      "default": 200
+    },
+    {
+      "type": "header",
       "content": "Border"
     },
     {
@@ -433,6 +502,8 @@ html {
         "text_color": "#ffffff",
         "hover_background": "#333333",
         "hover_text_color": "#ffffff",
+        "hover_animation": "color",
+        "animation_duration": 200,
         "border_width": 0,
         "border_color": "#1a1a1a",
         "border_radius": 0
