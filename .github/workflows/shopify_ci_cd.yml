@@ -5,6 +5,9 @@ on:
     branches: [ "master" ]
     paths:
       - '**/*.liquid'
+      - '**/*.json'
+      - 'assets/**'
+      - 'locales/*.json'
   workflow_dispatch:
 
 jobs:
