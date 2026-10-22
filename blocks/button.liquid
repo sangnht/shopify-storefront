@@ -33,6 +33,7 @@
     # Border and spacing
     assign borderWidth = settings.border_width | default: 0
     assign borderColor = settings.border_color | default: '#1a1a1a'
+    assign borderStyle = settings.border_style | default: 'solid'
     assign borderRadius = settings.border_radius | default: 0
     assign paddingVertical = settings.padding_vertical | default: 16
     assign paddingHorizontal = settings.padding_horizontal | default: 40
@@ -97,7 +98,7 @@
     text-decoration: none;
     color: {{ textColor }};
     background: {{ backgroundColor }};
-    border: {{ borderWidth }}px solid {{ borderColor }};
+    border: {{ borderWidth }}px {{ borderStyle }} {{ borderColor }};
     border-radius: {{ borderRadius }}px;
     cursor: pointer;
     {%- if hoverAnimation == 'none' %}
@@ -466,6 +467,31 @@ html {
       "visible_if": "{{ block.settings.border_width > 0 }}"
     },
     {
+      "type": "select",
+      "id": "border_style",
+      "label": "Border style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid"
+        },
+        {
+          "value": "dashed",
+          "label": "Dashed"
+        },
+        {
+          "value": "dotted",
+          "label": "Dotted"
+        },
+        {
+          "value": "double",
+          "label": "Double"
+        }
+      ],
+      "default": "solid",
+      "visible_if": "{{ block.settings.border_width > 0 }}"
+    },
+    {
       "type": "range",
       "id": "border_radius",
       "label": "Border radius",
@@ -506,6 +532,7 @@ html {
         "animation_duration": 200,
         "border_width": 0,
         "border_color": "#1a1a1a",
+        "border_style": "solid",
         "border_radius": 0
       }
     }

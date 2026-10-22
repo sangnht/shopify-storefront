@@ -13,6 +13,7 @@
     assign paddingHorizontal = settings.item_padding_horizontal | default: 20
     assign borderWidth = settings.item_border_width | default: 1
     assign borderColor = settings.item_border_color | default: '#e5e5e5'
+    assign borderStyle = settings.item_border_style | default: 'solid'
     assign borderRadius = settings.item_border_radius | default: 8
     assign itemBackground = settings.item_background | default: '#ffffff'
 
@@ -36,7 +37,7 @@
 
 #{{ blockId }} .accordion__item {
     background: {{ itemBackground }};
-    border: {{ borderWidth }}px solid {{ borderColor }};
+    border: {{ borderWidth }}px {{ borderStyle }} {{ borderColor }};
     border-radius: {{ borderRadius }}px;
     overflow: hidden;
 }
@@ -354,6 +355,31 @@
       "visible_if": "{{ block.settings.item_border_width > 0 }}"
     },
     {
+      "type": "select",
+      "id": "item_border_style",
+      "label": "Border style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid"
+        },
+        {
+          "value": "dashed",
+          "label": "Dashed"
+        },
+        {
+          "value": "dotted",
+          "label": "Dotted"
+        },
+        {
+          "value": "double",
+          "label": "Double"
+        }
+      ],
+      "default": "solid",
+      "visible_if": "{{ block.settings.item_border_width > 0 }}"
+    },
+    {
       "type": "range",
       "id": "item_border_radius",
       "label": "Border radius",
@@ -455,6 +481,7 @@
         "item_padding_horizontal": 20,
         "item_border_width": 1,
         "item_border_color": "#e5e5e5",
+        "item_border_style": "solid",
         "item_border_radius": 8,
         "item_background": "#ffffff",
         "heading_font_size_desktop": 16,

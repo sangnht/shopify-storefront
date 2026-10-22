@@ -42,6 +42,7 @@
     assign cardBackground = settings.card_background | default: 'transparent'
     assign cardBorderWidth = settings.card_border_width | default: 0
     assign cardBorderColor = settings.card_border_color | default: '#e5e5e5'
+    assign cardBorderStyle = settings.card_border_style | default: 'solid'
     assign cardRadius = settings.card_border_radius | default: 0
     assign cardPadVertical = settings.card_padding_vertical | default: 0
     assign cardPadHorizontal = settings.card_padding_horizontal | default: 0
@@ -101,7 +102,7 @@
     gap: 2rem;
     padding: {{ cardPadVertical }}px {{ cardPadHorizontal }}px;
     background: {{ cardBackground }};
-    border: {{ cardBorderWidth }}px solid {{ cardBorderColor }};
+    border: {{ cardBorderWidth }}px {{ cardBorderStyle }} {{ cardBorderColor }};
     border-radius: {{ cardRadius }}px;
     text-align: {{ alignment }};
     {%- if cardShadowOpacity > 0 %}
@@ -714,6 +715,31 @@
       "visible_if": "{{ block.settings.card_border_width > 0 }}"
     },
     {
+      "type": "select",
+      "id": "card_border_style",
+      "label": "Border style",
+      "options": [
+        {
+          "value": "solid",
+          "label": "Solid"
+        },
+        {
+          "value": "dashed",
+          "label": "Dashed"
+        },
+        {
+          "value": "dotted",
+          "label": "Dotted"
+        },
+        {
+          "value": "double",
+          "label": "Double"
+        }
+      ],
+      "default": "solid",
+      "visible_if": "{{ block.settings.card_border_width > 0 }}"
+    },
+    {
       "type": "range",
       "id": "card_border_radius",
       "label": "Border radius",
@@ -893,6 +919,7 @@
         "card_shadow_opacity": 10,
         "card_border_width": 0,
         "card_border_color": "#e5e5e5",
+        "card_border_style": "solid",
         "card_border_radius": 20,
         "card_padding_vertical": 24,
         "card_padding_horizontal": 24,
