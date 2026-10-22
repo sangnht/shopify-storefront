@@ -1,0 +1,309 @@
+{% liquid
+    assign blockId = block.id
+    assign settings = block.settings
+
+    # Source
+    assign source = settings.source | default: 'shopify'
+    assign video = settings.video
+    assign videoUrl = settings.video_url
+    assign description = settings.description | default: 'Video'
+
+    # Playback
+    assign autoplay = settings.autoplay
+    assign muted = settings.muted
+    assign loop = settings.loop
+    assign controls = settings.controls
+
+    # Browsers block autoplay with sound, so always mute when autoplaying.
+    if autoplay
+        assign muted = true
+    endif
+
+    # Layout
+    assign aspectRatio = settings.aspect_ratio | default: '16/9'
+    assign borderRadius = settings.border_radius | default: 0
+    assign maxWidth = settings.max_width | default: 0 | plus: 0
+    assign alignment = settings.alignment | default: 'left'
+
+    case alignment
+        when 'center'
+            assign justifyContent = 'center'
+        when 'right'
+            assign justifyContent = 'flex-end'
+        else
+            assign justifyContent = 'flex-start'
+    endcase
+
+    # External video parameters
+    assign videoId = videoUrl.id
+    assign loopParam = ''
+    if loop and videoUrl != blank
+        if videoUrl.type == 'youtube'
+            assign loopParam = '&loop=1&playlist=' | append: videoId
+        else
+            assign loopParam = '&loop=1'
+        endif
+    endif
+
+    assign autoplayValue = '0'
+    assign mutedValue = '0'
+    assign controlsValue = '1'
+    if autoplay
+        assign autoplayValue = '1'
+    endif
+    if muted
+        assign mutedValue = '1'
+    endif
+    unless controls
+        assign controlsValue = '0'
+    endunless
+%}
+
+{% style %}
+#{{ blockId }}.video-block {
+    display: flex;
+    justify-content: {{ justifyContent }};
+}
+
+#{{ blockId }} .video-block__media {
+    position: relative;
+    width: 100%;
+    {% if maxWidth > 0 %}
+        max-width: {{ maxWidth }}px;
+    {% endif %}
+    aspect-ratio: {{ aspectRatio }};
+    overflow: hidden;
+    border-radius: {{ borderRadius }}px;
+    background-color: #000000;
+}
+
+#{{ blockId }} .video-block__media > video,
+#{{ blockId }} .video-block__media > iframe {
+    display: block;
+    width: 100%;
+    height: 100%;
+    border: 0;
+    object-fit: cover;
+}
+
+#{{ blockId }} .video-block__placeholder {
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+{% endstyle %}
+
+<div id="{{ blockId }}" class="video-block" {{ block.shopify_attributes }}>
+    <div class="video-block__media">
+        {%- if source == 'external' -%}
+            {%- if videoUrl != blank -%}
+                {%- if videoUrl.type == 'youtube' -%}
+                    <iframe
+                        src="https://www.youtube.com/embed/{{ videoId }}?autoplay={{ autoplayValue }}&mute={{ mutedValue }}&controls={{ controlsValue }}&playsinline=1&rel=0{{ loopParam }}"
+                        title="{{ description | escape }}"
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        allowfullscreen
+                        {% unless autoplay %}loading="lazy"{% endunless %}
+                    ></iframe>
+                {%- else -%}
+                    <iframe
+                        src="https://player.vimeo.com/video/{{ videoId }}?autoplay={{ autoplayValue }}&muted={{ mutedValue }}&controls={{ controlsValue }}&playsinline=1&dnt=1{{ loopParam }}"
+                        title="{{ description | escape }}"
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        allowfullscreen
+                        {% unless autoplay %}loading="lazy"{% endunless %}
+                    ></iframe>
+                {%- endif -%}
+            {%- else -%}
+                {{ 'hero-apparel-3' | placeholder_svg_tag: 'placeholder-svg video-block__placeholder' }}
+            {%- endif -%}
+        {%- elsif video != blank -%}
+            {{
+                video
+                | video_tag:
+                    image_size: '1100x',
+                    autoplay: autoplay,
+                    loop: loop,
+                    controls: controls,
+                    muted: muted
+            }}
+        {%- else -%}
+            {{ 'hero-apparel-3' | placeholder_svg_tag: 'placeholder-svg video-block__placeholder' }}
+        {%- endif -%}
+    </div>
+</div>
+
+{% schema %}
+{
+  "name": "Video",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Source"
+    },
+    {
+      "type": "select",
+      "id": "source",
+      "label": "Video source",
+      "options": [
+        {
+          "value": "shopify",
+          "label": "Shopify hosted"
+        },
+        {
+          "value": "external",
+          "label": "YouTube or Vimeo"
+        }
+      ],
+      "default": "shopify"
+    },
+    {
+      "type": "video",
+      "id": "video",
+      "label": "Video",
+      "visible_if": "{{ block.settings.source == 'shopify' }}"
+    },
+    {
+      "type": "video_url",
+      "id": "video_url",
+      "label": "Video URL",
+      "accept": ["youtube", "vimeo"],
+      "visible_if": "{{ block.settings.source == 'external' }}"
+    },
+    {
+      "type": "text",
+      "id": "description",
+      "label": "Description",
+      "info": "Used as the video's accessible title.",
+      "default": "Video"
+    },
+    {
+      "type": "header",
+      "content": "Playback"
+    },
+    {
+      "type": "checkbox",
+      "id": "autoplay",
+      "label": "Autoplay",
+      "info": "Browsers only autoplay muted videos, so autoplay always mutes the video.",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "muted",
+      "label": "Mute",
+      "info": "Autoplay always mutes the video, so this mainly applies when autoplay is off.",
+      "default": true,
+      "visible_if": "{{ block.settings.autoplay == false }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "loop",
+      "label": "Loop",
+      "default": false
+    },
+    {
+      "type": "checkbox",
+      "id": "controls",
+      "label": "Show controls",
+      "info": "Keep enabled unless this is a background video that autoplays.",
+      "default": true
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "aspect_ratio",
+      "label": "Aspect ratio",
+      "options": [
+        {
+          "value": "16/9",
+          "label": "Wide (16:9)"
+        },
+        {
+          "value": "4/3",
+          "label": "Landscape (4:3)"
+        },
+        {
+          "value": "1/1",
+          "label": "Square (1:1)"
+        },
+        {
+          "value": "3/4",
+          "label": "Portrait (3:4)"
+        },
+        {
+          "value": "9/16",
+          "label": "Vertical (9:16)"
+        },
+        {
+          "value": "21/9",
+          "label": "Ultra wide (21:9)"
+        }
+      ],
+      "default": "16/9"
+    },
+    {
+      "type": "range",
+      "id": "max_width",
+      "label": "Max width",
+      "info": "0 fills the container.",
+      "min": 0,
+      "max": 1600,
+      "step": 20,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Video",
+      "category": "Custom",
+      "settings": {
+        "source": "shopify",
+        "description": "Video",
+        "autoplay": false,
+        "muted": true,
+        "loop": false,
+        "controls": true,
+        "aspect_ratio": "16/9",
+        "max_width": 0,
+        "alignment": "left",
+        "border_radius": 0
+      }
+    }
+  ]
+}
+{% endschema %}
