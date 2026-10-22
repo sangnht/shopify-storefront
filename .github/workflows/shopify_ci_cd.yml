@@ -3,6 +3,8 @@ name: Shopify Theme CI/CD
 on:
   push:
     branches: [ "master" ]
+    paths:
+      - '**/*.liquid'
   workflow_dispatch:
 
 jobs:
