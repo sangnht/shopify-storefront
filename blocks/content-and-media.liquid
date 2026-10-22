@@ -7,7 +7,7 @@
 
 {% endstylesheet %}
 
-<div id="{{ sectionId }}"></div>
+<div id="{{ sectionId }}">This is Content and Media Block</div>
 
 {% schema %}
 {
@@ -32,6 +32,12 @@
       "id": "media",
       "label": "Image"
     }
-  ]
+  ],
+    "presets": [
+        {
+        "name": "Content and media",
+        "category": "Custom"
+        }
+    ]
 }
 {% endschema %}
