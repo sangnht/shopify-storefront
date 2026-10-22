@@ -1,0 +1,443 @@
+{% liquid
+    assign blockId = block.id
+    assign settings = block.settings
+
+    # Content
+    assign label = settings.label | default: 'Button'
+    assign action = settings.action | default: 'link'
+    assign alignment = settings.alignment | default: 'left'
+    assign fullWidth = settings.full_width
+
+    # Typography
+    assign fontSizeDesktop = settings.font_size_desktop | default: 16
+    assign fontSizeMobile = settings.font_size_mobile | default: 16
+    assign fontWeight = settings.font_weight | default: 600
+    if settings.font_style_italic
+        assign fontStyleItalic = 'italic'
+    else
+        assign fontStyleItalic = 'normal'
+    endif
+    assign letterSpacing = settings.letter_spacing | default: 0
+    assign textTransform = settings.text_transform | default: 'none'
+
+    # Colors
+    assign backgroundColor = settings.background | default: '#1a1a1a'
+    assign textColor = settings.text_color | default: '#ffffff'
+    assign hoverBackgroundColor = settings.hover_background | default: '#333333'
+    assign hoverTextColor = settings.hover_text_color | default: '#ffffff'
+
+    # Border and spacing
+    assign borderWidth = settings.border_width | default: 0
+    assign borderColor = settings.border_color | default: '#1a1a1a'
+    assign borderRadius = settings.border_radius | default: 0
+    assign paddingVertical = settings.padding_vertical | default: 16
+    assign paddingHorizontal = settings.padding_horizontal | default: 40
+
+    # Alignment
+    case alignment
+        when 'center'
+            assign justifyContent = 'center'
+        when 'right'
+            assign justifyContent = 'flex-end'
+        else
+            assign justifyContent = 'flex-start'
+    endcase
+
+    # Destination
+    assign href = ''
+    assign isScroll = false
+    assign openInNewTab = false
+    assign scrollId = ''
+    assign scrollOffset = 0
+    assign smoothScroll = false
+
+    if action == 'scroll'
+        assign isScroll = true
+        assign scrollId = settings.scroll_target | strip | remove_first: '#'
+        assign scrollOffset = settings.scroll_offset | default: 0 | plus: 0
+        assign smoothScroll = settings.smooth_scroll
+
+        if scrollId == 'top'
+            assign href = '#'
+        elsif scrollId != blank
+            assign href = '#' | append: scrollId
+        endif
+    else
+        assign href = settings.link
+        assign openInNewTab = settings.open_in_new_tab
+    endif
+%}
+
+{% style %}
+#{{ blockId }}.button-block {
+    display: flex;
+    justify-content: {{ justifyContent }};
+}
+
+#{{ blockId }} .button-block__cta {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    max-width: 100%;
+    padding: {{ paddingVertical }}px {{ paddingHorizontal }}px;
+    font-size: {{ fontSizeDesktop }}px;
+    font-weight: {{ fontWeight }};
+    font-style: {{ fontStyleItalic }};
+    letter-spacing: {{ letterSpacing }}px;
+    line-height: 1.2;
+    text-align: center;
+    text-transform: {{ textTransform }};
+    text-decoration: none;
+    color: {{ textColor }};
+    background: {{ backgroundColor }};
+    border: {{ borderWidth }}px solid {{ borderColor }};
+    border-radius: {{ borderRadius }}px;
+    cursor: pointer;
+    transition: color 0.2s ease, background-color 0.2s ease, border-color 0.2s ease;
+    {% if fullWidth %}
+        width: 100%;
+    {% endif %}
+}
+
+#{{ blockId }} .button-block__cta:not(.button-block__cta--disabled):hover {
+    color: {{ hoverTextColor }};
+    background: {{ hoverBackgroundColor }};
+}
+
+#{{ blockId }} .button-block__cta:focus-visible {
+    outline: 0.2rem solid {{ textColor }};
+    outline-offset: 0.2rem;
+}
+
+#{{ blockId }} .button-block__cta--disabled {
+    cursor: default;
+}
+
+@media screen and (max-width: 749px) {
+    #{{ blockId }} .button-block__cta {
+        font-size: {{ fontSizeMobile }}px;
+    }
+}
+
+{%- if isScroll and scrollOffset > 0 -%}
+html {
+    scroll-padding-top: {{ scrollOffset }}px;
+}
+{%- endif -%}
+
+{%- if isScroll and smoothScroll -%}
+html {
+    scroll-behavior: smooth;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    html {
+        scroll-behavior: auto;
+    }
+}
+{%- endif -%}
+{% endstyle %}
+
+<div id="{{ blockId }}" class="button-block" {{ block.shopify_attributes }}>
+    {%- if href != blank -%}
+        <a
+            class="button-block__cta"
+            href="{{ href }}"
+            {%- if openInNewTab -%}
+                target="_blank" rel="noopener noreferrer"
+            {%- endif -%}
+        >
+            {{- label -}}
+        </a>
+    {%- else -%}
+        <span class="button-block__cta button-block__cta--disabled">{{ label }}</span>
+    {%- endif -%}
+</div>
+
+{% schema %}
+{
+  "name": "Button",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Content"
+    },
+    {
+      "type": "text",
+      "id": "label",
+      "label": "Label",
+      "default": "Button"
+    },
+    {
+      "type": "select",
+      "id": "action",
+      "label": "On click",
+      "options": [
+        {
+          "value": "link",
+          "label": "Open a link"
+        },
+        {
+          "value": "scroll",
+          "label": "Scroll to an element"
+        }
+      ],
+      "default": "link"
+    },
+    {
+      "type": "url",
+      "id": "link",
+      "label": "Link",
+      "visible_if": "{{ block.settings.action == 'link' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_in_new_tab",
+      "label": "Open in a new tab",
+      "default": false,
+      "visible_if": "{{ block.settings.action == 'link' }}"
+    },
+    {
+      "type": "text",
+      "id": "scroll_target",
+      "label": "Scroll target",
+      "info": "Element ID, with or without #. Use 'top' for the top of the page. Example: shopify-section-template--123__main-product",
+      "visible_if": "{{ block.settings.action == 'scroll' }}"
+    },
+    {
+      "type": "range",
+      "id": "scroll_offset",
+      "label": "Scroll offset",
+      "info": "Space kept above the target, useful for a sticky header.",
+      "min": 0,
+      "max": 200,
+      "step": 4,
+      "unit": "px",
+      "default": 80,
+      "visible_if": "{{ block.settings.action == 'scroll' }}"
+    },
+    {
+      "type": "checkbox",
+      "id": "smooth_scroll",
+      "label": "Smooth scroll",
+      "default": true,
+      "visible_if": "{{ block.settings.action == 'scroll' }}"
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "select",
+      "id": "alignment",
+      "label": "Alignment",
+      "options": [
+        {
+          "value": "left",
+          "label": "Left"
+        },
+        {
+          "value": "center",
+          "label": "Center"
+        },
+        {
+          "value": "right",
+          "label": "Right"
+        }
+      ],
+      "default": "left"
+    },
+    {
+      "type": "checkbox",
+      "id": "full_width",
+      "label": "Full width",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "padding_vertical",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 16,
+      "max": 100,
+      "step": 4,
+      "unit": "px",
+      "default": 40
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "font_size_desktop",
+      "label": "Font size (desktop)",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "font_size_mobile",
+      "label": "Font size (mobile)",
+      "min": 10,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "font_weight",
+      "label": "Font weight",
+      "min": 100,
+      "max": 900,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "checkbox",
+      "id": "font_style_italic",
+      "label": "Italic",
+      "default": false
+    },
+    {
+      "type": "range",
+      "id": "letter_spacing",
+      "label": "Letter spacing",
+      "min": -5,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "select",
+      "id": "text_transform",
+      "label": "Text transform",
+      "options": [
+        {
+          "value": "none",
+          "label": "None"
+        },
+        {
+          "value": "uppercase",
+          "label": "Uppercase"
+        },
+        {
+          "value": "lowercase",
+          "label": "Lowercase"
+        },
+        {
+          "value": "capitalize",
+          "label": "Capitalize"
+        }
+      ],
+      "default": "none"
+    },
+    {
+      "type": "header",
+      "content": "Colors"
+    },
+    {
+      "type": "color_background",
+      "id": "background",
+      "label": "Background",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "color",
+      "id": "text_color",
+      "label": "Text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "color_background",
+      "id": "hover_background",
+      "label": "Hover background",
+      "default": "#333333"
+    },
+    {
+      "type": "color",
+      "id": "hover_text_color",
+      "label": "Hover text color",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Border"
+    },
+    {
+      "type": "range",
+      "id": "border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 10,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    },
+    {
+      "type": "color",
+      "id": "border_color",
+      "label": "Border color",
+      "default": "#1a1a1a",
+      "visible_if": "{{ block.settings.border_width > 0 }}"
+    },
+    {
+      "type": "range",
+      "id": "border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 100,
+      "step": 1,
+      "unit": "px",
+      "default": 0
+    }
+  ],
+  "presets": [
+    {
+      "name": "Button",
+      "category": "Custom",
+      "settings": {
+        "label": "Button",
+        "action": "link",
+        "link": "",
+        "open_in_new_tab": false,
+        "scroll_target": "",
+        "scroll_offset": 80,
+        "smooth_scroll": true,
+        "alignment": "left",
+        "full_width": false,
+        "padding_vertical": 16,
+        "padding_horizontal": 40,
+        "font_size_desktop": 16,
+        "font_size_mobile": 16,
+        "font_weight": 600,
+        "font_style_italic": false,
+        "letter_spacing": 0,
+        "text_transform": "none",
+        "background": "#1a1a1a",
+        "text_color": "#ffffff",
+        "hover_background": "#333333",
+        "hover_text_color": "#ffffff",
+        "border_width": 0,
+        "border_color": "#1a1a1a",
+        "border_radius": 0
+      }
+    }
+  ]
+}
+{% endschema %}

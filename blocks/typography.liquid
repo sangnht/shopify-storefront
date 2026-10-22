@@ -10,11 +10,11 @@
     else
         assign fontStyleItalic = "normal"
     endif
+    assign letterSpacing = settings.letter_spacing | default: 0
 
     assign enableTextGradient = settings.enable_text_gradient | default: false
     assign gradientColor = settings.gradient_color | default: "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
     
-    assign textTransform = settings.text_transform | default: "none"
     assign textAlign = settings.text_align | default: "left"
 %}
 
@@ -26,6 +26,7 @@
         line-height: 1.5;
         font-weight: {{ fontWeight }};
         font-style: {{ fontStyleItalic }};
+        letter-spacing: {{ letterSpacing }}px;
         background: {{ gradientColor }};
         margin: 0;
         {% if enableTextGradient %}
@@ -34,7 +35,6 @@
         {% else %}
             display: inline;
         {% endif %}
-        text-transform: {{ textTransform }};
     }
 }
 {% endstyle %}
@@ -97,27 +97,14 @@
         "default": false
     },
     {
-        "type": "select",
-        "id": "text_transform",
-        "label": "Text Transform",
-        "options": [
-            {
-                "value": "none",
-                "label": "None"
-            },
-            {
-                "value": "uppercase",
-                "label": "Uppercase"
-            },
-            {
-                "value": "lowercase",
-                "label": "Lowercase"
-            },
-            {
-                "value": "capitalize",
-                "label": "Capitalize"
-            }
-        ]
+        "type": "range",
+        "id": "letter_spacing",
+        "label": "Letter Spacing",
+        "min": -5,
+        "max": 20,
+        "step": 1,
+        "unit": "px",
+        "default": 0
     },
     {
         "type": "select",
@@ -148,7 +135,7 @@
       "id": "content",
       "label": "Text",
       "default": "This is a Typography Block"
-    },
+    }
   ],
     "presets": [
         {
@@ -161,7 +148,7 @@
                 "font_size_mobile": 16,
                 "font_weight": 400,
                 "font_style_italic": false,
-                "text_transform": "none",
+                "letter_spacing": 0,
                 "text_align": "left",
                 "content": "This is a Typography Block"
             }
