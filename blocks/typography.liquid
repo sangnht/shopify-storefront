@@ -15,7 +15,6 @@
     assign enableTextGradient = settings.enable_text_gradient | default: false
     assign gradientColor = settings.gradient_color | default: "linear-gradient(133deg, rgba(250, 220, 54, 1) 11%, rgba(254, 98, 146, 1) 49%, rgba(250, 220, 54, 1) 87%)"
     
-    assign textTransform = settings.text_transform | default: "none"
     assign textAlign = settings.text_align | default: "left"
 %}
 
@@ -36,7 +35,6 @@
         {% else %}
             display: inline;
         {% endif %}
-        text-transform: {{ textTransform }};
     }
 }
 {% endstyle %}
@@ -110,29 +108,6 @@
     },
     {
         "type": "select",
-        "id": "text_transform",
-        "label": "Text Transform",
-        "options": [
-            {
-                "value": "none",
-                "label": "None"
-            },
-            {
-                "value": "uppercase",
-                "label": "Uppercase"
-            },
-            {
-                "value": "lowercase",
-                "label": "Lowercase"
-            },
-            {
-                "value": "capitalize",
-                "label": "Capitalize"
-            }
-        ]
-    },
-    {
-        "type": "select",
         "id": "text_align",
         "label": "Text Align",
         "options": [
@@ -174,7 +149,6 @@
                 "font_weight": 400,
                 "font_style_italic": false,
                 "letter_spacing": 0,
-                "text_transform": "none",
                 "text_align": "left",
                 "content": "This is a Typography Block"
             }
