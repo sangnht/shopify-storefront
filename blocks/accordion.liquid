@@ -1,0 +1,497 @@
+{% liquid
+    assign blockId = block.id
+    assign settings = block.settings
+
+    assign iconStyle = settings.icon_style | default: 'chevron'
+    assign iconPosition = settings.icon_position | default: 'right'
+    assign iconSize = settings.icon_size | default: 20
+    assign iconColor = settings.icon_color | default: '#1a1a1a'
+    assign animationDuration = settings.animation_duration | default: 300
+
+    assign itemGap = settings.item_gap | default: 8
+    assign paddingVertical = settings.item_padding_vertical | default: 16
+    assign paddingHorizontal = settings.item_padding_horizontal | default: 20
+    assign borderWidth = settings.item_border_width | default: 1
+    assign borderColor = settings.item_border_color | default: '#e5e5e5'
+    assign borderRadius = settings.item_border_radius | default: 8
+    assign itemBackground = settings.item_background | default: '#ffffff'
+
+    assign headingSizeDesktop = settings.heading_font_size_desktop | default: 16
+    assign headingSizeMobile = settings.heading_font_size_mobile | default: 15
+    assign headingWeight = settings.heading_font_weight | default: 600
+    assign headingColor = settings.heading_color | default: '#1a1a1a'
+    assign contentSizeDesktop = settings.content_font_size_desktop | default: 15
+    assign contentSizeMobile = settings.content_font_size_mobile | default: 14
+    assign contentColor = settings.content_color | default: '#4a4a4a'
+%}
+
+{% style %}
+#{{ blockId }}.accordion {
+    --accordion-duration: {{ animationDuration }}ms;
+    --accordion-easing: cubic-bezier(0.4, 0, 0.2, 1);
+    display: flex;
+    flex-direction: column;
+    gap: {{ itemGap }}px;
+}
+
+#{{ blockId }} .accordion__item {
+    background: {{ itemBackground }};
+    border: {{ borderWidth }}px solid {{ borderColor }};
+    border-radius: {{ borderRadius }}px;
+    overflow: hidden;
+}
+
+/* Keep the closed panel in the layout so its height can transition.
+   Browsers without ::details-content support fall back to the native instant toggle. */
+#{{ blockId }} .accordion__item::details-content {
+    display: block;
+    block-size: auto;
+    content-visibility: visible;
+}
+
+#{{ blockId }} .accordion__body {
+    display: grid;
+    grid-template-rows: 0fr;
+    transition: grid-template-rows var(--accordion-duration) var(--accordion-easing);
+}
+
+#{{ blockId }} .accordion__body-inner {
+    overflow: hidden;
+    visibility: hidden;
+    transition: visibility 0s linear var(--accordion-duration);
+}
+
+#{{ blockId }} .accordion__item[open] .accordion__body {
+    grid-template-rows: 1fr;
+}
+
+#{{ blockId }} .accordion__item[open] .accordion__body-inner {
+    visibility: visible;
+    transition-delay: 0s;
+}
+
+#{{ blockId }} .accordion__summary {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+    padding: {{ paddingVertical }}px {{ paddingHorizontal }}px;
+    cursor: pointer;
+    list-style: none;
+}
+
+#{{ blockId }} .accordion__summary::-webkit-details-marker {
+    display: none;
+}
+
+#{{ blockId }} .accordion__summary:focus-visible {
+    outline: 0.2rem solid {{ headingColor }};
+    outline-offset: -0.2rem;
+}
+
+#{{ blockId }}.accordion--icon-pos-left .accordion__summary {
+    flex-direction: row-reverse;
+}
+
+#{{ blockId }} .accordion__heading {
+    flex: 1 1 auto;
+    margin: 0;
+    font-size: {{ headingSizeDesktop }}px;
+    font-weight: {{ headingWeight }};
+    line-height: 1.3;
+    color: {{ headingColor }};
+    text-align: left;
+    word-break: break-word;
+}
+
+#{{ blockId }} .accordion__icon {
+    display: flex;
+    flex: 0 0 auto;
+    width: {{ iconSize }}px;
+    height: {{ iconSize }}px;
+    color: {{ iconColor }};
+}
+
+#{{ blockId }} .accordion__icon-svg {
+    display: block;
+    width: 100%;
+    height: 100%;
+    transition: transform var(--accordion-duration) var(--accordion-easing);
+}
+
+#{{ blockId }} .accordion__icon-path {
+    display: none;
+    transition: opacity var(--accordion-duration) var(--accordion-easing),
+        transform var(--accordion-duration) var(--accordion-easing);
+}
+
+#{{ blockId }}.accordion--icon-plus_minus .accordion__icon-path--plus-v,
+#{{ blockId }}.accordion--icon-plus_minus .accordion__icon-path--plus-h,
+#{{ blockId }}.accordion--icon-plus_rotate .accordion__icon-path--plus-v,
+#{{ blockId }}.accordion--icon-plus_rotate .accordion__icon-path--plus-h,
+#{{ blockId }}.accordion--icon-chevron .accordion__icon-path--chevron,
+#{{ blockId }}.accordion--icon-caret .accordion__icon-path--caret,
+#{{ blockId }}.accordion--icon-arrow .accordion__icon-path--arrow {
+    display: block;
+}
+
+#{{ blockId }}.accordion--icon-none .accordion__icon {
+    display: none;
+}
+
+#{{ blockId }} .accordion__icon-path--plus-v {
+    transform-box: view-box;
+    transform-origin: 12px 12px;
+}
+
+/* The vertical stroke rotates onto the horizontal stroke and the two lines merge
+   into a single minus. Rotating 90deg around the center maps the 14px vertical
+   stroke exactly onto the horizontal one (M5 12h14). */
+#{{ blockId }}.accordion--icon-plus_minus .accordion__item[open] .accordion__icon-path--plus-v {
+    transform: rotate(90deg);
+}
+
+/* Plus rotates into a close icon when open. */
+#{{ blockId }}.accordion--icon-plus_rotate .accordion__item[open] .accordion__icon-svg {
+    transform: rotate(45deg);
+}
+
+#{{ blockId }}.accordion--icon-chevron .accordion__item[open] .accordion__icon-svg,
+#{{ blockId }}.accordion--icon-caret .accordion__item[open] .accordion__icon-svg {
+    transform: rotate(180deg);
+}
+
+#{{ blockId }}.accordion--icon-arrow .accordion__item[open] .accordion__icon-svg {
+    transform: rotate(90deg);
+}
+
+#{{ blockId }} .accordion__panel {
+    padding: 0 {{ paddingHorizontal }}px {{ paddingVertical }}px;
+}
+
+#{{ blockId }} .accordion__content {
+    font-size: {{ contentSizeDesktop }}px;
+    line-height: 1.6;
+    color: {{ contentColor }};
+    word-break: break-word;
+}
+
+#{{ blockId }} .accordion__content > :first-child {
+    margin-top: 0;
+}
+
+#{{ blockId }} .accordion__content > :last-child {
+    margin-bottom: 0;
+}
+
+@media screen and (max-width: 749px) {
+    #{{ blockId }} .accordion__heading {
+        font-size: {{ headingSizeMobile }}px;
+    }
+
+    #{{ blockId }} .accordion__content {
+        font-size: {{ contentSizeMobile }}px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #{{ blockId }} .accordion__body,
+    #{{ blockId }} .accordion__body-inner,
+    #{{ blockId }} .accordion__icon-svg,
+    #{{ blockId }} .accordion__icon-path {
+        transition: none;
+    }
+
+    #{{ blockId }} .accordion__item[open] .accordion__icon-svg {
+        transform: none;
+    }
+}
+{% endstyle %}
+
+<div
+    id="{{ blockId }}"
+    class="accordion accordion--icon-{{ iconStyle }} accordion--icon-pos-{{ iconPosition }}"
+    {{ block.shopify_attributes }}
+>
+    {% content_for 'blocks' %}
+</div>
+
+{% schema %}
+{
+  "name": "Accordion",
+  "settings": [
+    {
+      "type": "header",
+      "content": "Indicator"
+    },
+    {
+      "type": "select",
+      "id": "icon_style",
+      "label": "Indicator icon",
+      "options": [
+        {
+          "value": "plus_minus",
+          "label": "Plus / minus"
+        },
+        {
+          "value": "plus_rotate",
+          "label": "Plus / close"
+        },
+        {
+          "value": "chevron",
+          "label": "Chevron"
+        },
+        {
+          "value": "caret",
+          "label": "Caret"
+        },
+        {
+          "value": "arrow",
+          "label": "Arrow"
+        },
+        {
+          "value": "none",
+          "label": "None"
+        }
+      ],
+      "default": "chevron"
+    },
+    {
+      "type": "select",
+      "id": "icon_position",
+      "label": "Indicator position",
+      "options": [
+        {
+          "value": "right",
+          "label": "Right"
+        },
+        {
+          "value": "left",
+          "label": "Left"
+        }
+      ],
+      "default": "right"
+    },
+    {
+      "type": "range",
+      "id": "icon_size",
+      "label": "Indicator size",
+      "min": 12,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "color",
+      "id": "icon_color",
+      "label": "Indicator color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "header",
+      "content": "Animation"
+    },
+    {
+      "type": "range",
+      "id": "animation_duration",
+      "label": "Animation speed",
+      "info": "Duration of the open and close transition.",
+      "min": 100,
+      "max": 600,
+      "step": 50,
+      "unit": "ms",
+      "default": 300
+    },
+    {
+      "type": "header",
+      "content": "Layout"
+    },
+    {
+      "type": "range",
+      "id": "item_gap",
+      "label": "Space between items",
+      "min": 0,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "range",
+      "id": "item_padding_vertical",
+      "label": "Vertical padding",
+      "min": 8,
+      "max": 40,
+      "step": 2,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "item_padding_horizontal",
+      "label": "Horizontal padding",
+      "min": 8,
+      "max": 48,
+      "step": 2,
+      "unit": "px",
+      "default": 20
+    },
+    {
+      "type": "range",
+      "id": "item_border_width",
+      "label": "Border width",
+      "min": 0,
+      "max": 4,
+      "step": 1,
+      "unit": "px",
+      "default": 1
+    },
+    {
+      "type": "color",
+      "id": "item_border_color",
+      "label": "Border color",
+      "default": "#e5e5e5",
+      "visible_if": "{{ block.settings.item_border_width > 0 }}"
+    },
+    {
+      "type": "range",
+      "id": "item_border_radius",
+      "label": "Border radius",
+      "min": 0,
+      "max": 40,
+      "step": 1,
+      "unit": "px",
+      "default": 8
+    },
+    {
+      "type": "color_background",
+      "id": "item_background",
+      "label": "Background",
+      "default": "#ffffff"
+    },
+    {
+      "type": "header",
+      "content": "Typography"
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_desktop",
+      "label": "Heading size (desktop)",
+      "min": 12,
+      "max": 32,
+      "step": 1,
+      "unit": "px",
+      "default": 16
+    },
+    {
+      "type": "range",
+      "id": "heading_font_size_mobile",
+      "label": "Heading size (mobile)",
+      "min": 12,
+      "max": 28,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "heading_font_weight",
+      "label": "Heading weight",
+      "min": 100,
+      "max": 900,
+      "step": 100,
+      "default": 600
+    },
+    {
+      "type": "color",
+      "id": "heading_color",
+      "label": "Heading color",
+      "default": "#1a1a1a"
+    },
+    {
+      "type": "range",
+      "id": "content_font_size_desktop",
+      "label": "Content size (desktop)",
+      "min": 12,
+      "max": 24,
+      "step": 1,
+      "unit": "px",
+      "default": 15
+    },
+    {
+      "type": "range",
+      "id": "content_font_size_mobile",
+      "label": "Content size (mobile)",
+      "min": 12,
+      "max": 20,
+      "step": 1,
+      "unit": "px",
+      "default": 14
+    },
+    {
+      "type": "color",
+      "id": "content_color",
+      "label": "Content color",
+      "default": "#4a4a4a"
+    }
+  ],
+  "blocks": [
+    {
+      "type": "_accordion-item"
+    }
+  ],
+  "presets": [
+    {
+      "name": "Accordion",
+      "category": "Custom",
+      "settings": {
+        "icon_style": "chevron",
+        "icon_position": "right",
+        "icon_size": 20,
+        "icon_color": "#1a1a1a",
+        "animation_duration": 300,
+        "item_gap": 8,
+        "item_padding_vertical": 16,
+        "item_padding_horizontal": 20,
+        "item_border_width": 1,
+        "item_border_color": "#e5e5e5",
+        "item_border_radius": 8,
+        "item_background": "#ffffff",
+        "heading_font_size_desktop": 16,
+        "heading_font_size_mobile": 15,
+        "heading_font_weight": 600,
+        "heading_color": "#1a1a1a",
+        "content_font_size_desktop": 15,
+        "content_font_size_mobile": 14,
+        "content_color": "#4a4a4a"
+      },
+      "blocks": [
+        {
+          "type": "_accordion-item",
+          "settings": {
+            "heading": "What is your return policy?",
+            "content": "<p>We accept returns within 30 days of delivery. Items must be unused and in their original packaging.</p>",
+            "open_by_default": true
+          }
+        },
+        {
+          "type": "_accordion-item",
+          "settings": {
+            "heading": "How long does shipping take?",
+            "content": "<p>Orders are processed within 1–2 business days. Standard shipping takes 3–5 business days.</p>",
+            "open_by_default": false
+          }
+        },
+        {
+          "type": "_accordion-item",
+          "settings": {
+            "heading": "Do you ship internationally?",
+            "content": "<p>Yes, we ship to most countries. Shipping costs and delivery times are calculated at checkout.</p>",
+            "open_by_default": false
+          }
+        }
+      ]
+    }
+  ]
+}
+{% endschema %}

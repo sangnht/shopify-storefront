@@ -1,0 +1,66 @@
+{% liquid
+    assign openByDefault = block.settings.open_by_default
+%}
+
+<details
+    id="Accordion-{{ block.id }}"
+    class="accordion__item"
+    {% if openByDefault %}open{% endif %}
+    {{ block.shopify_attributes }}
+>
+    <summary id="AccordionSummary-{{ block.id }}" class="accordion__summary">
+        <h3 class="accordion__heading">{{ block.settings.heading }}</h3>
+        <span class="accordion__icon" aria-hidden="true">
+            <svg class="accordion__icon-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" focusable="false">
+                <path class="accordion__icon-path accordion__icon-path--plus-v" d="M12 5v14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path class="accordion__icon-path accordion__icon-path--plus-h" d="M5 12h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" />
+                <path class="accordion__icon-path accordion__icon-path--chevron" d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+                <path class="accordion__icon-path accordion__icon-path--caret" d="M7 10l5 5 5-5z" fill="currentColor" />
+                <path class="accordion__icon-path accordion__icon-path--arrow" d="M4 12h16M14 6l6 6-6 6" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" />
+            </svg>
+        </span>
+    </summary>
+    <div class="accordion__body">
+        <div class="accordion__body-inner">
+            <div class="accordion__panel" role="region" aria-labelledby="AccordionSummary-{{ block.id }}">
+                <div class="accordion__content rte">{{ block.settings.content }}</div>
+            </div>
+        </div>
+    </div>
+</details>
+
+{% schema %}
+{
+  "name": "Accordion item",
+  "settings": [
+    {
+      "type": "inline_richtext",
+      "id": "heading",
+      "label": "Heading",
+      "default": "Accordion title"
+    },
+    {
+      "type": "richtext",
+      "id": "content",
+      "label": "Content",
+      "default": "<p>Add details about this item.</p>"
+    },
+    {
+      "type": "checkbox",
+      "id": "open_by_default",
+      "label": "Open by default",
+      "default": false
+    }
+  ],
+  "presets": [
+    {
+      "name": "Accordion item",
+      "settings": {
+        "heading": "Accordion title",
+        "content": "<p>Add details about this item.</p>",
+        "open_by_default": false
+      }
+    }
+  ]
+}
+{% endschema %}
